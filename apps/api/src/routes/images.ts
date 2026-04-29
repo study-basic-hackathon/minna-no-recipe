@@ -11,7 +11,23 @@ images.post("/", async (c) => {
     return c.json({ error: "file field is required" }, 400);
   }
 
-  const ext = file.name.includes(".") ? file.name.split(".").pop() : "bin";
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+  const MIME_TO_EXT: Record<string, string> = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/gif": "gif",
+    "image/webp": "webp",
+  };
+
+  if (file.size > MAX_FILE_SIZE) {
+    return c.json({ error: "File size exceeds limit" }, 400);
+  }
+
+  const ext = MIME_TO_EXT[file.type];
+  if (!ext) {
+    return c.json({ error: "Invalid file type" }, 400);
+  }
+
   const path = `${crypto.randomUUID()}.${ext}`;
 
   const { error: uploadError } = await supabase.storage

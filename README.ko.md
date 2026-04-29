@@ -34,7 +34,7 @@ TOP 페이지에는 실제로 만들어 본 사람들의 사진을 표시하는 
 - [Vercel](https://vercel.com/) - 호스팅
 - [Next.js](https://nextjs.org/) - 프론트엔드 프레임워크
 - [Auth.js](https://authjs.dev/) - 로그인 인증
-- [Zod](https://zod.dev/) - DB 검증
+- [Zod](https://zod.dev/) - 스키마 검증
 - [Hono](https://hono.dev/) - 백엔드 프레임워크
 - [Tailwind CSS](https://tailwindcss.com/) - CSS
 - [Drizzle ORM](https://orm.drizzle.team/) - ORM
@@ -77,7 +77,7 @@ TOP 페이지에는 실제로 만들어 본 사람들의 사진을 표시하는 
 ### 커밋 메시지
 
 - add, delete, fix 등, 해당 커밋에서 무엇을 했는지 간결한 메시지를 남겨주세요.
-- 예: `feat: 사진 업로드 기능 추가`
+- 예: `add: 사진 업로드 기능 추가`
 
 ## 기능
 

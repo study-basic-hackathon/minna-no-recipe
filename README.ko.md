@@ -39,28 +39,6 @@ TOP 페이지에는 실제로 만들어 본 사람들의 사진을 표시하는 
 - [Tailwind CSS](https://tailwindcss.com/) - CSS
 - [Drizzle ORM](https://orm.drizzle.team/) - ORM
 
-## TODO
-
-### 프론트엔드
-
-- [ ] Next.js 환경 구축: 오야마 (ESLint, Stylelint 도입)
-- [ ] Next.js 최신 버전, Node.js ver.22, 패키지 매니저는 pnpm
-- [ ] Next.js 내 프론트 디렉토리 구조: 오야마
-- [ ] Figma 디자인 시안 작성: 오야마
-
-### 백엔드
-
-- [ ] 이미지 벡터 검색 기능: 하야시
-- [ ] Coderabbit 설정: 하야시
-- [ ] DB 검색 후 Frontend에 반환: 오가와
-- [ ] Supabase 구축: 하야시
-
-### 기타
-
-- [x] README 작성
-- [ ] 추천 레시피 검색 등...
-- [ ] Cloudflare R2 또는 AWS S3
-
 ## 브랜치 전략
 
 이 프로젝트에서는 간결한 GitHub Flow를 채택하고 있습니다. develop 브랜치는 사용하지 않고 main 브랜치만 사용합니다.

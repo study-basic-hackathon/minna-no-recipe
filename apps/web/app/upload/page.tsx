@@ -30,9 +30,7 @@ export default function UploadPage() {
         method: "POST",
         body: formData,
       });
-      const data = (await res.json()) as
-        | UploadResult
-        | { error: string };
+      const data = (await res.json()) as UploadResult | { error: string };
 
       if (!res.ok || "error" in data) {
         setError("error" in data ? data.error : "upload failed");
@@ -70,7 +68,7 @@ export default function UploadPage() {
 
       {result && (
         <div className="mt-6 space-y-2">
-          <p className="break-all text-sm text-zinc-600">{result.path}</p>
+          <p className="text-sm break-all text-zinc-600">{result.path}</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={result.url} alt="uploaded" className="w-full rounded" />
         </div>

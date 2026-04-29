@@ -1,0 +1,23 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "style": "off"
+  },
+  "rules": {
+    "no-unused-vars": "error",
+    "no-console": "warn",
+    "react/react-in-jsx-scope": "off"
+  },
+  "overrides": [
+    {
+      "files": ["src/lib/logger.ts", "apps/api/src/**"],
+      "rules": {
+        "no-console": "off"
+      }
+    }
+  ],
+  "ignorePatterns": ["dist", "node_modules", "apps/api/dist", "scripts", "**/*.gen.ts"]
+}

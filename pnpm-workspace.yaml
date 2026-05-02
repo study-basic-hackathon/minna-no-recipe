@@ -1,6 +1,9 @@
 packages:
   - "apps/*"
 
-ignoredBuiltDependencies:
+onlyBuiltDependencies:
   - sharp
+  - onnxruntime-node
+  - protobufjs
+  - esbuild
   - unrs-resolver

@@ -51,3 +51,6 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# seed dataset (copied locally, not committed)
+apps/api/data/

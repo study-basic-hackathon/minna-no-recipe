@@ -50,7 +50,13 @@ search.post("/", async (c) => {
     data: { publicUrl },
   } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(path);
 
-  const embedding = await embedImage(buffer);
+  let embedding;
+  try {
+    embedding = await embedImage(buffer);
+  } catch (err) {
+    await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+    throw err;
+  }
 
   const similarity = sql<number>`1 - (${cosineDistance(recipes.embedding, embedding)})`;
   const matched = await db
@@ -85,21 +91,33 @@ search.post("/", async (c) => {
         .limit(CATEGORY_LIMIT)
     : [];
 
-  const [saved] = await db
-    .insert(images)
-    .values({
-      storagePath: path,
-      publicUrl,
-      size: file.size,
-      mimeType: file.type,
-      embedding,
-      matchedRecipeId: matched[0]?.id,
-    })
-    .returning({ id: images.id });
+  let saved: { id: string } | undefined;
+  try {
+    [saved] = await db
+      .insert(images)
+      .values({
+        storagePath: path,
+        publicUrl,
+        size: file.size,
+        mimeType: file.type,
+        embedding,
+        matchedRecipeId: matched[0]?.id,
+      })
+      .returning({ id: images.id });
+  } catch (err) {
+    await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+    console.error("[search] Failed to save image record:", err);
+    return c.json({ error: "Failed to save image record" }, 500);
+  }
+
+  if (!saved) {
+    await supabase.storage.from(STORAGE_BUCKET).remove([path]);
+    return c.json({ error: "Failed to save image record" }, 500);
+  }
 
   return c.json({
     image: {
-      id: saved?.id,
+      id: saved.id,
       path,
       url: publicUrl,
     },

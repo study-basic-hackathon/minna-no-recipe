@@ -36,6 +36,10 @@ function normalize(tensor: { data: Float32Array; dims: number[] }): number[] {
   }
   norm = Math.sqrt(norm);
 
+  if (norm < 1e-12) {
+    return new Array<number>(dim).fill(0);
+  }
+
   const result = new Array<number>(dim);
   for (let d = 0; d < dim; d++) {
     result[d] = data[d] / norm;
@@ -58,15 +62,21 @@ async function bufferToRawImage(buf: Buffer): Promise<RawImage> {
   );
 }
 
+async function urlToBuffer(url: string): Promise<Buffer> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Failed to fetch image: ${res.status} ${res.statusText}`);
+  }
+  return Buffer.from(await res.arrayBuffer());
+}
+
 export async function embedImage(input: Buffer | string): Promise<number[]> {
   if (!processor || !visionModel) {
     throw new Error("Embedder not initialized. Call initEmbedder() first.");
   }
 
-  const image =
-    typeof input === "string"
-      ? await RawImage.fromURL(input)
-      : await bufferToRawImage(input);
+  const buffer = typeof input === "string" ? await urlToBuffer(input) : input;
+  const image = await bufferToRawImage(buffer);
 
   const processed = await processor(image);
   const { image_embeds } = await visionModel(processed);

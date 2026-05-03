@@ -83,13 +83,16 @@ async function main() {
         );
         const embedding = await embedImage(buffer);
 
-        await db.insert(recipes).values({
-          name: `${category} - ${file}`,
-          category,
-          description: `${category} 料理`,
-          imageUrl: publicUrl,
-          embedding,
-        });
+        await db
+          .insert(recipes)
+          .values({
+            name: `${category} - ${file}`,
+            category,
+            description: `${category} 料理`,
+            imageUrl: publicUrl,
+            embedding,
+          })
+          .onConflictDoNothing();
 
         total++;
         if (total % 10 === 0) {

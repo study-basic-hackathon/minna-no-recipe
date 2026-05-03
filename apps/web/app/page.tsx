@@ -2,64 +2,46 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <>
+      <header className="fixed top-0 left-0 w-full bg-white/90 shadow-md z-50">
+        <div className="flex justify-between items-center max-w-250 p-2 mx-auto">
+          <h1>
+            <a href="#">
+              <Image src="/logo.svg" alt="みんなのレシピ" width={200} height={40} />
+            </a>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+          <a className="rounded-full bg-[#FE8C12] text-white px-6 py-2 hover:opacity-80 transition" href="">
+            レシピを探す
           </a>
         </div>
+      </header>
+      <main>
+        <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
+          <div className="flex flex-col items-center justify-center gap-7 w-250 mx-auto">
+            <form className="flex flex-col items-center justify-center w-full gap-6 bg-white/90 border border-dashed border-[#886D74] rounded-2xl p-10">
+              <label className="before:block before:content-[''] before:h-17.5 before:w-25 before:bg-[url(/icon-upload.svg)] before:bg-center before:bg-no-repeat">
+                <input
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  required
+                  className="sr-only"
+                />
+              </label>
+              <div className="flex flex-col items-center justify-center gap-2">
+                <p className="text-[#FE7210] font-semibold text-2xl">料理写真をアップロードしてレシピを検索</p>
+                <p>ドラッグ&ドロップまたはクリックして選択</p>
+              </div>
+            </form>
+            <button
+              className="rounded-full bg-[#FE8C12] px-16 py-1 font-semibold text-[32px] text-white disabled:opacity-50 shadow-md"
+              type="submit"
+            >
+              検索する
+            </button>
+          </div>
+        </section>
       </main>
-    </div>
+    </>
   );
 }

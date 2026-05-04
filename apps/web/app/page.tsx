@@ -1,5 +1,23 @@
 import Image from "next/image";
 
+const steps = [
+  {
+    title: "写真をアップロード",
+    icon: "/icon-photo.svg",
+    desc: "レシピを知りたい写真を下記からアップロードしてください",
+  },
+  {
+    title: "類似レシピを検索",
+    icon: "/icon-search.svg",
+    desc: "アップロードされた画像から推測されるレシピを紹介します",
+  },
+  {
+    title: "レシピで料理を再現",
+    icon: "/icon-dishes.svg",
+    desc: "アップロードされた画像から推測されるレシピを紹介します",
+  },
+];
+
 export default function Home() {
   return (
     <>
@@ -29,7 +47,7 @@ export default function Home() {
                 />
               </label>
               <div className="flex flex-col items-center justify-center gap-2">
-                <p className="text-[#FE7210] font-semibold text-2xl">料理写真をアップロードしてレシピを検索</p>
+                <h2 className="text-[#FE7210] font-semibold text-2xl">料理写真をアップロードしてレシピを検索</h2>
                 <p>ドラッグ&ドロップまたはクリックして選択</p>
               </div>
             </form>
@@ -41,7 +59,45 @@ export default function Home() {
             </button>
           </div>
         </section>
-      </main>
+        <section className="bg-[#FFF9EB] py-20">
+          <div className="flex flex-col items-center justify-center gap-6 w-250 mx-auto">
+            <div className="flex flex-col items-center justify-center gap-2 w-250">
+              <h2 className="text-3xl font-bold text-[#FE8C12]">写真からレシピを見つけよう</h2>
+              <div className="text-center">
+                <p>気になる料理の写真をアップロードするだけで、類似したレシピを簡単に検索できます。</p>
+                <p>旅行先で食べた料理や、人気のカフェメニューを自宅で再現してみませんか？</p>
+              </div>
+            </div>
+            <ol className="flex gap-10 w-full">
+              {steps.map((step, i) => (
+                <li
+                  key={step.title}
+                  className="
+                      relative flex flex-1 min-w-0 flex-col border border-[#E97D35] rounded-lg
+                      after:content-[''] after:absolute after:top-1/2 after:-translate-y-1/2 after:-right-8.5 after:w-6 after:h-12 after:bg-[#FCBB15]
+                      after:[clip-path:polygon(0_0,100%_50%,0_100%)]
+                      last:after:hidden
+                    "
+                >
+                  <span className="w-full bg-[#E97D35] text-white text-center text-xl font-semibold rounded-t-lg py-2">
+                    STEP {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="bg-white rounded-b-lg p-4 flex flex-col items-center gap-4">
+                    <div className="grid place-items-center h-24 w-24 bg-[#FFF5EB] rounded-full">
+                      <Image src={step.icon} alt={step.title} width={40} height={40} />
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="font-semibold text-[#E97D35] text-xl">{step.title}</p>
+                      <p className="text-center">{step.desc}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section >
+      </main >
     </>
   );
 }

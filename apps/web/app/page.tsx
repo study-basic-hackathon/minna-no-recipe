@@ -14,7 +14,7 @@ const steps = [
   {
     title: "レシピで料理を再現",
     icon: "/icon-dishes.svg",
-    desc: "アップロードされた画像から推測されるレシピを紹介します",
+    desc: "再現してみた料理を投稿して他の人にもシェアしよう！",
   },
 ];
 
@@ -68,6 +68,54 @@ const recentMenus = [
     name: "リボンパスタのジェノベーゼ",
     link: "#",
     image: "/img-asparagus.png",
+  },
+];
+
+const works = [
+  {
+    name: "アスパラガスのベーコン巻き",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "ステーキとポテトの鉄板焼き",
+    link: "#",
+    image: "/img-bakedpotato.jpg",
+  },
+  {
+    name: "オートミールクッキー",
+    link: "#",
+    image: "/img-cookies.jpg",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-pasta.jpg",
+  },
+  {
+    name: "5色野菜のサラダ",
+    link: "#",
+    image: "/img-salad.jpg",
+  },
+  {
+    name: "ブルーベリーのフレンチトースト",
+    link: "#",
+    image: "/img-toast.jpg",
+  },
+  {
+    name: "ツナとキャベツのホットサンド",
+    link: "#",
+    image: "/img-hotsand.jpg",
+  },
+  {
+    name: "サンラータン",
+    link: "#",
+    image: "/img-noodle.jpg",
+  },
+  {
+    name: "鶏胸肉のグリル",
+    link: "#",
+    image: "/img-chicken.jpg",
   },
 ];
 
@@ -156,14 +204,14 @@ export default function Home() {
                 今月のおすすめメニュー
               </h2>
               <div className="flex items-center gap-8 w-full">
-                <div className="relative w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg">
+                <a className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg">
                   <Image className="object-cover object-center" src="/img-asparagus.png" alt={"今月のおすすめメニュー"} width={400} height={287} />
                   <span className="absolute bottom-0 left-0 w-full p-4 bg-white/90">
                     ベーコンのアスパラ巻き
                   </span>
-                </div>
+                </a>
                 <div
-                  className="flex-1 py-6 px-1"
+                  className="flex flex-col gap-6 items-end flex-1 py-6 px-1"
                   style={{
                     borderTop: '1px solid transparent',
                     borderBottom: '1px solid transparent',
@@ -173,6 +221,9 @@ export default function Home() {
                   <p className="leading-[1.8]">
                     春から初夏にかけて旬を迎えるアスパラガスは、みずみずしく甘みが強いのが特徴です。特に北海道や長野県産が有名で、昼夜の寒暖差によってやわらかく風味豊かに育ちます。ベーコンで巻いて焼くことで、アスパラのシャキッとした食感と自然な甘さに、ベーコンの塩気と旨みが重なり、シンプルながら満足感のある一品に仕上がります。旬の味わいをぜひ楽しんでみてください。
                   </p>
+                  <a href="" className="text-[#E97D35] hover:underline transition-all duration-100 font-semibold">
+                    →レシピを見る
+                  </a>
                 </div>
               </div>
             </div>
@@ -184,13 +235,13 @@ export default function Home() {
                 最近検索されたメニュー
               </h2>
               <ul className="
-              grid gap-6 w-full overflow-x-auto
-              grid-flow-col
-              auto-cols-[296px]
-              p-2
-              pb-8
-              snap-x snap-mandatory
-            ">
+                grid gap-6 w-full overflow-x-auto
+                grid-flow-col
+                auto-cols-[296px]
+                p-2
+                pb-8
+                snap-x snap-mandatory
+              ">
                 {recentMenus.map((menu, index) => (
                   <li key={index} className="grid grid-rows-[auto_1fr] drop-shadow-lg">
                     <a className="contents" href={menu.link}>
@@ -198,6 +249,34 @@ export default function Home() {
                         <Image className="object-cover object-center" src={menu.image} alt={menu.name} fill />
                       </div>
                       <span className="bg-white rounded-b-xl p-4">{menu.name}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </section>
+          <section>
+            <div className="flex flex-col gap-4 w-250 mx-auto">
+              <h2 className="flex items-end gap-2 text-2xl font-bold
+              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat">
+                ユーザーが投稿した料理たち
+              </h2>
+              <ul className="columns-3 gap-6 p-2 pb-8">
+                {works.map((menu, index) => (
+                  <li key={index} className="mb-6 break-inside-avoid">
+                    <a href={menu.link} className="block drop-shadow-lg">
+                      <div className="overflow-hidden rounded-t-xl bg-white">
+                        <Image
+                          src={menu.image}
+                          alt={menu.name}
+                          width={296}
+                          height={200}
+                          className="w-full h-auto object-cover"
+                        />
+                      </div>
+                      <span className="block bg-white rounded-b-xl p-4">
+                        {menu.name}
+                      </span>
                     </a>
                   </li>
                 ))}

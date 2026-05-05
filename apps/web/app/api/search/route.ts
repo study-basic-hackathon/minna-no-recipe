@@ -10,8 +10,8 @@
  */
 import type { NextRequest } from "next/server";
 
-// /api/search のレスポンスを構成するレシピ 1 件
-export type Recipe = {
+// /api/search のレスポンスを構成する training_images 1 件
+export type TrainingImage = {
   id: string;
   name: string;
   description: string | null;
@@ -20,7 +20,7 @@ export type Recipe = {
 };
 
 // 類似度スコア付きの検索結果 1 件
-export type SearchResultItem = Recipe & { similarity: number };
+export type SearchResultItem = TrainingImage & { similarity: number };
 
 // /api/search のレスポンス全体
 export type SearchResult = {

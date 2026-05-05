@@ -1,6 +1,6 @@
 /**
  * シードスクリプト: apps/api/data/train_data/<category>/*.jpg を読み込んで、
- * Supabase Storage にアップロード + CLIP 埋め込み生成 + recipes テーブルに INSERT を行う。
+ * Supabase Storage にアップロード + CLIP 埋め込み生成 + training_images テーブルに INSERT を行う。
  *
  * 実行: pnpm --filter @minna-no-recipe/api seed
  *   apps/api ディレクトリを cwd として tsx で実行される
@@ -8,7 +8,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { db } from "../db/index.js";
-import { recipes } from "../db/schema.js";
+import { trainingImages } from "../db/schema.js";
 import { embedImage, initEmbedder } from "../lib/embedder.js";
 import { STORAGE_BUCKET, supabase } from "../lib/supabase.js";
 
@@ -25,7 +25,7 @@ const EXT_TO_MIME: Record<string, string> = {
 
 /**
  * 1 枚の画像を Supabase Storage にアップロードして、公開 URL を返す。
- * パスは `recipes/<category>/<filename>` の形式で整理する。
+ * パスは `training_images/<category>/<filename>` の形式で整理する。
  * 同じパスがあれば上書き (upsert: true) するので、再シードしても安全。
  */
 async function uploadToStorage(
@@ -34,7 +34,7 @@ async function uploadToStorage(
   buffer: Buffer,
   contentType: string,
 ): Promise<string> {
-  const storagePath = `recipes/${category}/${filename}`;
+  const storagePath = `training_images/${category}/${filename}`;
 
   const { error } = await supabase.storage
     .from(STORAGE_BUCKET)
@@ -107,7 +107,7 @@ async function main() {
         // onConflictDoNothing: 同じ row が既に存在してもエラーで止まらない
         // (再シード時の安全装置)
         await db
-          .insert(recipes)
+          .insert(trainingImages)
           .values({
             name: `${category} - ${file}`,
             category,

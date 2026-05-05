@@ -1,14 +1,14 @@
 import { and, cosineDistance, desc, gt, isNotNull, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../db/index.js";
-import { images, recipes } from "../db/schema.js";
+import { images, trainingImages } from "../db/schema.js";
 import { embedImage } from "../lib/embedder.js";
 import { STORAGE_BUCKET, supabase } from "../lib/supabase.js";
 
 // アップロードできるファイルサイズの上限 (10MB)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-// 類似度がこの値未満のレシピは「マッチなし」として除外する
+// 類似度がこの値未満は「マッチなし」として除外する
 // (CLIP-base での経験値: 同じ料理 0.85+ / 似た系統 0.75+ / 別物 ~0.65)
 const SIMILARITY_THRESHOLD = 0.7;
 
@@ -27,11 +27,11 @@ export const search = new Hono();
 /**
  * POST /api/search
  *
- * 画像をアップロードして、類似するレシピを検索する。
+ * 画像をアップロードして、類似する training_images を検索する。
  *  1. multipart で画像を受信
  *  2. Supabase Storage にアップロード
  *  3. CLIP で埋め込みを生成
- *  4. pgvector でレシピを類似度検索 (閾値以上のみ)
+ *  4. pgvector で training_images を類似度検索 (閾値以上のみ)
  *  5. images テーブルに保存
  *  6. JSON で結果を返却
  */
@@ -88,20 +88,23 @@ search.post("/", async (c) => {
   // ── 4. pgvector でコサイン類似度検索 ──
   // `<=>` はコサイン距離 (0=同じ / 2=正反対) なので、
   // `1 - cosineDistance` でコサイン類似度 (1=同じ / -1=正反対) に変換する
-  const similarity = sql<number>`1 - (${cosineDistance(recipes.embedding, embedding)})`;
+  const similarity = sql<number>`1 - (${cosineDistance(trainingImages.embedding, embedding)})`;
   const searchResults = await db
     .select({
-      id: recipes.id,
-      name: recipes.name,
-      description: recipes.description,
-      category: recipes.category,
-      imageUrl: recipes.imageUrl,
+      id: trainingImages.id,
+      name: trainingImages.name,
+      description: trainingImages.description,
+      category: trainingImages.category,
+      imageUrl: trainingImages.imageUrl,
       similarity,
     })
-    .from(recipes)
+    .from(trainingImages)
     .where(
-      // 埋め込みがある かつ 閾値を超えるレシピだけが対象
-      and(isNotNull(recipes.embedding), gt(similarity, SIMILARITY_THRESHOLD)),
+      // 埋め込みがある かつ 閾値を超える行だけが対象
+      and(
+        isNotNull(trainingImages.embedding),
+        gt(similarity, SIMILARITY_THRESHOLD),
+      ),
     )
     .orderBy(desc(similarity))
     .limit(limit);
@@ -122,7 +125,7 @@ search.post("/", async (c) => {
         size: file.size,
         mimeType: file.type,
         embedding,
-        matchedRecipeId: searchResults[0]?.id,
+        matchedTrainingImageId: searchResults[0]?.id,
       })
       .returning({ id: images.id });
   } catch (err) {

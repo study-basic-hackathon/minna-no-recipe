@@ -56,7 +56,11 @@ export function ImageSearchForm({ onResult }: Props) {
   return (
     <div className="space-y-4">
       <form onSubmit={onSubmit} className="space-y-4">
+        <label htmlFor="search-image" className="block text-sm font-medium">
+          検索する画像を選択
+        </label>
         <input
+          id="search-image"
           type="file"
           name="file"
           accept="image/*"

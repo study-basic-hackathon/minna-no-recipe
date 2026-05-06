@@ -1,4 +1,4 @@
-import { and, cosineDistance, desc, gt, isNotNull, sql } from "drizzle-orm";
+import { and, cosineDistance, desc, gte, isNotNull, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { db } from "../db/index.js";
 import { images, trainingImages } from "../db/schema.js";
@@ -103,7 +103,7 @@ search.post("/", async (c) => {
       // 埋め込みがある かつ 閾値を超える行だけが対象
       and(
         isNotNull(trainingImages.embedding),
-        gt(similarity, SIMILARITY_THRESHOLD),
+        gte(similarity, SIMILARITY_THRESHOLD),
       ),
     )
     .orderBy(desc(similarity))

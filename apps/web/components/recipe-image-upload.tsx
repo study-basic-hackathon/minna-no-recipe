@@ -61,10 +61,16 @@ export function RecipeImageUpload({ onResult }: Props) {
     const formData = new FormData();
     formData.append("file", file);
 
+    // バックエンドが応答しない時に永遠に pending のまま固まらないよう、
+    // 15 秒で強制中断する。CLIP 推論 + アップロードを含めても通常は十分。
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res = await fetch("/api/search", {
         method: "POST",
         body: formData,
+        signal: controller.signal,
       });
       const data = (await res.json()) as SearchResult | { error: string };
 
@@ -74,8 +80,14 @@ export function RecipeImageUpload({ onResult }: Props) {
       }
       onResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "unknown error");
+      // タイムアウト由来の AbortError と通常エラーを区別してメッセージを変える
+      if (err instanceof DOMException && err.name === "AbortError") {
+        setError("通信がタイムアウトしました。もう一度お試しください。");
+      } else {
+        setError(err instanceof Error ? err.message : "unknown error");
+      }
     } finally {
+      clearTimeout(timeoutId);
       setPending(false);
     }
   }

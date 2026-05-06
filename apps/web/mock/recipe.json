@@ -1,0 +1,37 @@
+{
+  "data": {
+    "id": "recipe_000001",
+    "slug": "asparagus-bacon-roll-recipe_000001",
+    "title": "ベーコンのアスパラ巻き",
+    "image": {
+      "src": "/img-asparagus.png",
+      "alt": "ベーコンのアスパラ巻き"
+    },
+    "servings": 2,
+    "ingredients": [
+      {
+        "group": "材料",
+        "items": [
+          { "name": "アスパラガス", "amount": "4", "unit": "本" },
+          { "name": "ベーコン", "amount": "4", "unit": "枚" }
+        ]
+      },
+      {
+        "group": "調味料",
+        "items": [
+          { "name": "オリーブオイル", "amount": "1", "unit": "大さじ" },
+          { "name": "塩", "amount": null, "unit": "少々" },
+          { "name": "黒胡椒", "amount": null, "unit": "少々" }
+        ]
+      }
+    ],
+    "instructions": [
+      { "order": 1, "text": "アスパラガスは根元の硬い部分を切り落とし、必要に応じて皮をむく。" },
+      { "order": 2, "text": "ベーコンを広げ、アスパラガスを1本ずつ巻きつける。" },
+      { "order": 3, "text": "フライパンにオリーブオイルを熱し、ベーコンで巻いたアスパラガスを並べる。" },
+      { "order": 4, "text": "中火で約5分焼き、ベーコンがカリッとするまで焼く。" },
+      { "order": 5, "text": "焼きあがったら塩と黒胡椒で味を調える。" }
+    ],
+    "createdAt": "2026-05-06T00:00:00.000Z"
+  }
+}

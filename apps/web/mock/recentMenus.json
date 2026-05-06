@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "name": "リボンパスタのジェノベーゼ",
+      "slug": "pasta-genovese",
+      "image": "/img-asparagus.png"
+    },
+    {
+      "id": "2",
+      "name": "リボンパスタのジェノベーゼ",
+      "slug": "pasta-genovese-2",
+      "image": "/img-asparagus.png"
+    },
+    {
+      "id": "3",
+      "name": "リボンパスタのジェノベーゼ",
+      "slug": "pasta-genovese-3",
+      "image": "/img-asparagus.png"
+    }
+  ],
+  "meta": {
+    "total": 10,
+    "limit": 10
+  }
+}

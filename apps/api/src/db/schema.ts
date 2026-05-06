@@ -7,7 +7,10 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 
-export const recipes = pgTable("recipes", {
+// ベクトル検索の対象となるラベル付き画像 (学習データ)
+// 「料理」ではなくカテゴリ付きの食品画像で、CLIP 埋め込みを保存しておき
+// アップロードされた画像との類似度検索に使う
+export const trainingImages = pgTable("training_images", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
   description: text("description"),
@@ -22,6 +25,8 @@ export const recipes = pgTable("recipes", {
     .notNull(),
 });
 
+// ユーザーがアップロードした画像とその埋め込みを永続化するテーブル
+// (データ資産として蓄積される)
 export const images = pgTable("images", {
   id: uuid("id").primaryKey().defaultRandom(),
   storagePath: text("storage_path").notNull(),
@@ -29,15 +34,17 @@ export const images = pgTable("images", {
   size: integer("size"),
   mimeType: text("mime_type"),
   embedding: vector("embedding", { dimensions: 512 }),
-  matchedRecipeId: uuid("matched_recipe_id").references(() => recipes.id, {
-    onDelete: "set null",
-  }),
+  // どの training_images にマッチしたかの参照 (top-1)
+  matchedTrainingImageId: uuid("matched_training_image_id").references(
+    () => trainingImages.id,
+    { onDelete: "set null" },
+  ),
   createdAt: timestamp("created_at", { withTimezone: true })
     .defaultNow()
     .notNull(),
 });
 
-export type Recipe = typeof recipes.$inferSelect;
-export type NewRecipe = typeof recipes.$inferInsert;
+export type TrainingImage = typeof trainingImages.$inferSelect;
+export type NewTrainingImage = typeof trainingImages.$inferInsert;
 export type Image = typeof images.$inferSelect;
 export type NewImage = typeof images.$inferInsert;

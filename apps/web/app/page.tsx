@@ -20,59 +20,6 @@ const steps = [
   },
 ];
 
-const recentMenus = [
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-];
-
 const works = [
   {
     name: "アスパラガスのベーコン巻き",
@@ -121,7 +68,31 @@ const works = [
   },
 ];
 
-export default function Home() {
+type RecentMenu = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+};
+
+export default async function Home() {
+  const res = await fetch(
+    "http://localhost:3000/mock/recentMenus.json",
+    {
+      cache: "no-store",
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error("recentMenus の取得に失敗しました");
+  }
+
+  const json = await res.json();
+
+  console.log(json);
+
+  const recentMenus: RecentMenu[] = json.data;
+
   return (
     <main>
       <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
@@ -211,7 +182,7 @@ export default function Home() {
               ">
               {recentMenus.map((menu, index) => (
                 <li key={index} className="grid grid-rows-[auto_1fr] drop-shadow-lg">
-                  <a className="contents" href={menu.link}>
+                  <a className="contents" href={menu.slug}>
                     <div className="relative w-full h-58 rounded-t-xl overflow-hidden">
                       <Image className="object-cover object-center" src={menu.image} alt={menu.name} fill />
                     </div>

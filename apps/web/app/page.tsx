@@ -209,33 +209,39 @@ export default async function Home() {
               before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat">
               ユーザーが投稿した料理たち
             </h2>
-            {/* 2-3-2 レイアウト: 6 列グリッドで 1・2 行目は 3 列ずつ占有、2 行目は 2 列ずつ */}
-            <ul className="grid grid-cols-6 gap-6 p-2 pb-8">
-              {works.slice(0, 7).map((menu, index) => (
-                <li
-                  key={index}
-                  className={
-                    // 0,1 行目 / 5,6 行目は 2 枚 → col-span-3、 2~4 行目は 3 枚 → col-span-2
-                    index < 2 || index >= 5 ? "col-span-3" : "col-span-2"
-                  }
+            {/* 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。 */}
+            {/* 自動分配 (columns-3) だと中央 3 件を保証できないため、列を明示的に作る。 */}
+            <div className="grid grid-cols-3 gap-6 p-2 pb-8">
+              {[
+                works.slice(0, 2), // 左列 2 件
+                works.slice(2, 5), // 中央列 3 件
+                works.slice(5, 7), // 右列 2 件
+              ].map((column, columnIndex) => (
+                <ul
+                  key={columnIndex}
+                  className="flex flex-col gap-6"
                 >
-                  <a href={menu.link} className="block drop-shadow-lg">
-                    <div className="overflow-hidden rounded-t-xl bg-white">
-                      <Image
-                        src={menu.image}
-                        alt={menu.name}
-                        width={296}
-                        height={200}
-                        className="w-full h-auto object-cover"
-                      />
-                    </div>
-                    <span className="block bg-white rounded-b-xl p-4">
-                      {menu.name}
-                    </span>
-                  </a>
-                </li>
+                  {column.map((menu, index) => (
+                    <li key={index}>
+                      <a href={menu.link} className="block drop-shadow-lg">
+                        <div className="overflow-hidden rounded-t-xl bg-white">
+                          <Image
+                            src={menu.image}
+                            alt={menu.name}
+                            width={296}
+                            height={200}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                        <span className="block bg-white rounded-b-xl p-4">
+                          {menu.name}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
               ))}
-            </ul>
+            </div>
           </div>
         </section>
       </section>

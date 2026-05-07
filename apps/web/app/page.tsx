@@ -1,6 +1,8 @@
 import Image from "next/image";
 
 import Step from "../components/Step";
+// TODO: API 完成後はバックエンドから取得する。現状は仮データの import で代用。
+import recentMenusMock from "@/public/mock/recentMenus.json";
 
 const steps = [
   {
@@ -76,18 +78,22 @@ type RecentMenu = {
 };
 
 export default async function Home() {
-  const res = await fetch(
-    "http://localhost:3000/mock/recentMenus.json",
-    {
-      cache: "no-store",
-    }
-  );
-
-  if (!res.ok) {
-    throw new Error("recentMenus の取得に失敗しました");
-  }
-
-  const json = await res.json();
+  // TODO: API 完成後は下記の fetch を有効化してバックエンドから取得する。
+  // 現状は self-fetch でビルド時 prerender が失敗する可能性があるため、
+  // 一時的に import で代用している。
+  // const res = await fetch(
+  //   "http://localhost:3000/mock/recentMenus.json",
+  //   {
+  //     cache: "no-store",
+  //   }
+  // );
+  //
+  // if (!res.ok) {
+  //   throw new Error("recentMenus の取得に失敗しました");
+  // }
+  //
+  // const json = await res.json();
+  const json = recentMenusMock;
 
   console.log(json);
 

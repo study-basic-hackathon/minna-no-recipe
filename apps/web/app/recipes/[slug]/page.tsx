@@ -92,21 +92,9 @@ export default async function RecipeDetailPage({
   const { slug } = await params;
   // TODO: API 完成後は slug でレシピを取得する。今はモックを返すだけ
   void slug;
+  // Header / Footer は layout.tsx で挿入されるため、ここでは <main> のみ返す
   return (
-    <>
-      <header className="fixed top-0 left-0 w-full bg-white/90 shadow-md z-50">
-        <div className="flex justify-between items-center max-w-250 py-3 mx-auto">
-          <h1>
-            <a href="#">
-              <Image src="/logo.svg" alt="みんなのレシピ" width={200} height={40} />
-            </a>
-          </h1>
-          <a className="rounded-full bg-[#FE8C12] text-white font-semibold px-6 py-2 hover:opacity-80 transition" href="">
-            レシピを探す
-          </a>
-        </div>
-      </header>
-      <main>
+    <main>
         <section className="py-30 flex flex-col w-full gap-20 mx-auto">
           <section>
             <div className="flex flex-col gap-4 w-250 mx-auto">
@@ -200,12 +188,6 @@ export default async function RecipeDetailPage({
 
         </section>
 
-      </main >
-      <footer className="w-full bg-[#FCBB15]">
-        <div className="max-w-250 py-4 mx-auto">
-          <p>みんなのレシピ</p>
-        </div>
-      </footer>
-    </>
+      </main>
   );
 }

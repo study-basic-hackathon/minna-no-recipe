@@ -1,9 +1,14 @@
 import Image from "next/image";
 
 import Step from "../components/Step";
-// TODO: API 完成後はバックエンドから取得する。現状は仮データの import で代用。
-import recentMenusMock from "@/public/mock/recentMenus.json";
+/**
+ * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
+ */
+import recentMenusMock from "@/mock/recentMenus.json";
 
+/**
+ * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
+ */
 const steps = [
   {
     title: "写真をアップロード",
@@ -22,6 +27,9 @@ const steps = [
   },
 ];
 
+/**
+ * @deprecated 仮データ。API 完成後に削除し、ユーザー投稿一覧をサーバーから取得するように差し替える。
+ */
 const works = [
   {
     name: "アスパラガスのベーコン巻き",

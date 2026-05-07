@@ -1,5 +1,8 @@
 import Image from "next/image";
 
+/**
+ * @deprecated 仮データ。API 完成後に削除し、slug 経由でレシピを取得するように差し替える。
+ */
 const recipe = {
   title: "ベーコンのアスパラ巻き",
   image: "/img-asparagus.png",
@@ -29,6 +32,9 @@ const recipe = {
   ],
 };
 
+/**
+ * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
+ */
 const recentMenus = [
   {
     name: "リボンパスタのジェノベーゼ",

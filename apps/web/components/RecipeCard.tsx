@@ -1,6 +1,12 @@
 import Image from "next/image";
 
-const Step = ({ step, i }: { step: any; i: number }) => {
+type RecipeStep = {
+  title: string;
+  icon: string;
+  desc: string;
+};
+
+const RecipeCard = ({ step, i }: { step: RecipeStep; i: number }) => {
   return (
     <li
       key={step.title}
@@ -27,4 +33,4 @@ const Step = ({ step, i }: { step: any; i: number }) => {
   );
 };
 
-export default Step;
+export default RecipeCard;

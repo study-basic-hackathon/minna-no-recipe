@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import Step from "../components/Step";
+import RecipeCard from "../components/RecipeCard";
 /**
  * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
  */
@@ -140,7 +140,7 @@ export default async function Home() {
           </div>
           <ol className="flex gap-10 w-full">
             {steps.map((step, i) => (
-              <Step key={i} step={step} i={i} />))}
+              <RecipeCard key={i} step={step} i={i} />))}
           </ol>
         </div>
       </section>

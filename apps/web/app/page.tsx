@@ -93,11 +93,7 @@ export default async function Home() {
   // }
   //
   // const json = await res.json();
-  const json = recentMenusMock;
-
-  console.log(json);
-
-  const recentMenus: RecentMenu[] = json.data;
+  const recentMenus: RecentMenu[] = recentMenusMock.data;
 
   return (
     <main>

@@ -1,65 +1,250 @@
 import Image from "next/image";
 
-export default function Home() {
+import RecipeCard from "../components/RecipeCard";
+/**
+ * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
+ */
+import recentMenusMock from "@/mock/recentMenus.json";
+
+/**
+ * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
+ */
+const steps = [
+  {
+    title: "写真をアップロード",
+    icon: "/icon-photo.svg",
+    desc: "レシピを知りたい写真を下記からアップロードしてください",
+  },
+  {
+    title: "類似レシピを検索",
+    icon: "/icon-search.svg",
+    desc: "アップロードされた画像から推測されるレシピを紹介します",
+  },
+  {
+    title: "レシピで料理を再現",
+    icon: "/icon-dishes.svg",
+    desc: "再現してみた料理を投稿して他の人にもシェアしよう！",
+  },
+];
+
+/**
+ * @deprecated 仮データ。API 完成後に削除し、ユーザー投稿一覧をサーバーから取得するように差し替える。
+ */
+const works = [
+  {
+    name: "アスパラガスのベーコン巻き",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "ステーキとポテトの鉄板焼き",
+    link: "#",
+    image: "/img-bakedpotato.jpg",
+  },
+  {
+    name: "オートミールクッキー",
+    link: "#",
+    image: "/img-cookies.jpg",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-pasta.jpg",
+  },
+  {
+    name: "5色野菜のサラダ",
+    link: "#",
+    image: "/img-salad.jpg",
+  },
+  {
+    name: "ブルーベリーのフレンチトースト",
+    link: "#",
+    image: "/img-toast.jpg",
+  },
+  {
+    name: "ツナとキャベツのホットサンド",
+    link: "#",
+    image: "/img-hotsand.jpg",
+  },
+  {
+    name: "サンラータン",
+    link: "#",
+    image: "/img-noodle.jpg",
+  },
+  {
+    name: "鶏胸肉のグリル",
+    link: "#",
+    image: "/img-chicken.jpg",
+  },
+];
+
+type RecentMenu = {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+};
+
+export default async function Home() {
+  // TODO: API 完成後は下記の fetch を有効化してバックエンドから取得する。
+  // 現状は self-fetch でビルド時 prerender が失敗する可能性があるため、
+  // 一時的に import で代用している。
+  // const res = await fetch(
+  //   "http://localhost:3000/mock/recentMenus.json",
+  //   {
+  //     cache: "no-store",
+  //   }
+  // );
+  //
+  // if (!res.ok) {
+  //   throw new Error("recentMenus の取得に失敗しました");
+  // }
+  //
+  // const json = await res.json();
+  const recentMenus: RecentMenu[] = recentMenusMock.data;
+
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex w-full max-w-3xl flex-1 flex-col items-center justify-between bg-white px-16 py-32 sm:items-start dark:bg-black">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl leading-10 font-semibold tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main>
+      <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
+        <div className="flex flex-col items-center justify-center gap-7 w-250 mx-auto">
+          <form className="flex flex-col items-center justify-center w-full max-w-250 mx-auto gap-8 bg-white/90 rounded-2xl p-10">
+            <label className="before:block before:content-[''] before:h-12.5 before:w-20 before:bg-[url(/icon-upload.svg)] before:bg-contain before:bg-center before:bg-no-repeat">
+              <input
+                type="file"
+                name="file"
+                accept="image/*"
+                required
+                className="sr-only"
+              />
+            </label>
+            <div className="flex flex-col items-center justify-center gap-2">
+              <h2 className="text-[#FE7210] font-semibold text-3xl">料理写真をアップロードしてレシピを検索</h2>
+              <p>ドラッグ&ドロップまたはクリックして選択</p>
+            </div>
+          </form>
+          <button
+            type="submit"
+            className="rounded-full bg-[#FE8C12] px-16 py-2 font-semibold text-2xl text-white disabled:opacity-50 drop-shadow-md">
+            検索する
+          </button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="bg-foreground text-background flex h-12 w-full items-center justify-center gap-2 rounded-full px-5 transition-colors hover:bg-[#383838] md:w-[158px] dark:hover:bg-[#ccc]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] md:w-[158px] dark:border-white/[.145] dark:hover:bg-[#1a1a1a]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+      <section className="bg-[#FFF9EB] py-20">
+        <div className="flex flex-col items-center justify-center gap-6 w-250 mx-auto">
+          <div className="flex flex-col items-center justify-center gap-2 w-250">
+            <h2 className="text-3xl font-bold text-[#FE8C12]">写真からレシピを見つけよう</h2>
+            <div className="text-center">
+              <p>気になる料理の写真をアップロードするだけで、類似したレシピを簡単に検索できます。</p>
+              <p>旅行先で食べた料理や、人気のカフェメニューを自宅で再現してみませんか？</p>
+            </div>
+          </div>
+          <ol className="flex gap-10 w-full">
+            {steps.map((step, i) => (
+              <RecipeCard key={i} step={step} i={i} />))}
+          </ol>
         </div>
-      </main>
-    </div>
+      </section>
+      <section className="py-30 flex flex-col w-full gap-20 mx-auto">
+        <section>
+          <div className="flex flex-col gap-4 w-250 mx-auto">
+            <h2 className="flex items-end gap-2 text-2xl font-bold
+              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-crown.svg')] before:bg-contain before:bg-no-repeat">
+              今月のおすすめメニュー
+            </h2>
+            <div className="flex items-center gap-8 w-full">
+              <a className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg">
+                <Image className="object-cover object-center" src="/img-asparagus.png" alt={"今月のおすすめメニュー"} width={400} height={287} />
+                <span className="absolute bottom-0 left-0 w-full p-4 bg-white/90">
+                  ベーコンのアスパラ巻き
+                </span>
+              </a>
+              <div
+                className="flex flex-col gap-6 items-end flex-1 py-6 px-1"
+                style={{
+                  borderTop: '1px solid transparent',
+                  borderBottom: '1px solid transparent',
+                  borderImage: 'repeating-linear-gradient(to right, #E97D35 0 8px, transparent 8px 16px) 1'
+                }}
+              >
+                <p className="leading-[1.8]">
+                  春から初夏にかけて旬を迎えるアスパラガスは、みずみずしく甘みが強いのが特徴です。特に北海道や長野県産が有名で、昼夜の寒暖差によってやわらかく風味豊かに育ちます。ベーコンで巻いて焼くことで、アスパラのシャキッとした食感と自然な甘さに、ベーコンの塩気と旨みが重なり、シンプルながら満足感のある一品に仕上がります。旬の味わいをぜひ楽しんでみてください。
+                </p>
+                <a href="" className="text-[#E97D35] hover:underline transition-all duration-100 font-semibold">
+                  →レシピを見る
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section>
+          <div className="flex flex-col gap-4 w-250 mx-auto">
+            <h2 className="flex items-end gap-2 text-2xl font-bold
+              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat">
+              最近検索されたメニュー
+            </h2>
+            <ul className="
+                grid gap-6 w-full overflow-x-auto
+                grid-flow-col
+                auto-cols-[296px]
+                p-2
+                pb-8
+                snap-x snap-mandatory
+              ">
+              {recentMenus.map((menu, index) => (
+                <li key={index} className="grid grid-rows-[auto_1fr] drop-shadow-lg">
+                  <a className="contents" href={`/recipes/${menu.slug}`}>
+                    <div className="relative w-full h-58 rounded-t-xl overflow-hidden">
+                      <Image className="object-cover object-center" src={menu.image} alt={menu.name} fill />
+                    </div>
+                    <span className="bg-white rounded-b-xl p-4">{menu.name}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+        <section>
+          <div className="flex flex-col gap-4 w-250 mx-auto">
+            <h2 className="flex items-end gap-2 text-2xl font-bold
+              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat">
+              ユーザーが投稿した料理たち
+            </h2>
+            {/* 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。 */}
+            {/* 自動分配 (columns-3) だと中央 3 件を保証できないため、列を明示的に作る。 */}
+            <div className="grid grid-cols-3 gap-6 p-2 pb-8">
+              {[
+                works.slice(0, 2), // 左列 2 件
+                works.slice(2, 5), // 中央列 3 件
+                works.slice(5, 7), // 右列 2 件
+              ].map((column, columnIndex) => (
+                <ul
+                  key={columnIndex}
+                  className="flex flex-col gap-6"
+                >
+                  {column.map((menu, index) => (
+                    <li key={index}>
+                      <a href={menu.link} className="block drop-shadow-lg">
+                        <div className="overflow-hidden rounded-t-xl bg-white">
+                          <Image
+                            src={menu.image}
+                            alt={menu.name}
+                            width={296}
+                            height={200}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                        <span className="block bg-white rounded-b-xl p-4">
+                          {menu.name}
+                        </span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+          </div>
+        </section>
+      </section>
+    </main >
   );
 }

@@ -184,7 +184,7 @@ export default async function Home() {
               ">
               {recentMenus.map((menu, index) => (
                 <li key={index} className="grid grid-rows-[auto_1fr] drop-shadow-lg">
-                  <a className="contents" href={menu.slug}>
+                  <a className="contents" href={`/recipes/${menu.slug}`}>
                     <div className="relative w-full h-58 rounded-t-xl overflow-hidden">
                       <Image className="object-cover object-center" src={menu.image} alt={menu.name} fill />
                     </div>

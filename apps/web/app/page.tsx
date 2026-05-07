@@ -209,9 +209,16 @@ export default async function Home() {
               before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat">
               ユーザーが投稿した料理たち
             </h2>
-            <ul className="columns-3 gap-6 p-2 pb-8">
-              {works.map((menu, index) => (
-                <li key={index} className="mb-6 break-inside-avoid">
+            {/* 2-3-2 レイアウト: 6 列グリッドで 1・2 行目は 3 列ずつ占有、2 行目は 2 列ずつ */}
+            <ul className="grid grid-cols-6 gap-6 p-2 pb-8">
+              {works.slice(0, 7).map((menu, index) => (
+                <li
+                  key={index}
+                  className={
+                    // 0,1 行目 / 5,6 行目は 2 枚 → col-span-3、 2~4 行目は 3 枚 → col-span-2
+                    index < 2 || index >= 5 ? "col-span-3" : "col-span-2"
+                  }
+                >
                   <a href={menu.link} className="block drop-shadow-lg">
                     <div className="overflow-hidden rounded-t-xl bg-white">
                       <Image

@@ -83,7 +83,15 @@ const recentMenus = [
 ];
 
 
-export default function Home() {
+export default async function RecipeDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  // Next.js 16 では params は Promise なので await する
+  const { slug } = await params;
+  // TODO: API 完成後は slug でレシピを取得する。今はモックを返すだけ
+  void slug;
   return (
     <>
       <header className="fixed top-0 left-0 w-full bg-white/90 shadow-md z-50">

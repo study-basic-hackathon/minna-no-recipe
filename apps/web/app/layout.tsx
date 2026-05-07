@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Inter, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,7 +36,11 @@ export default function RootLayout({
       lang="jp"
       className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body>
+        <Header />
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -26,6 +26,38 @@ CREATE TABLE IF NOT EXISTS images (
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
+--Recipes レシピテーブル
+CREATE TABLE IF NOT EXISTS recipes (
+  recipe_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  category TEXT NOT NULL,
+  image_path TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+--Ingredients 材料テーブル
+CREATE TABLE IF NOT EXISTS ingredients (
+  ingredient_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recipe_id UUID NOT NULL REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  amount TEXT,
+  unit TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+);
+
+--Steps 手順テーブル
+CREATE TABLE IF NOT EXISTS steps (
+  step_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  recipe_id UUID NOT NULL REFERENCES recipes(recipe_id) ON DELETE CASCADE,
+  step_number INTEGER NOT NULL,
+  description TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  UNIQUE (recipe_id, step_number)
+);
+
 -- HNSW indexes for cosine similarity search
 CREATE INDEX IF NOT EXISTS training_images_embedding_idx
   ON training_images USING hnsw (embedding vector_cosine_ops);

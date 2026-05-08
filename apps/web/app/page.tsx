@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { RecipeImageUpload}  from "../components/RecipeImageUpload";
+import type { SearchResult } from "@/app/api/search/route";
 
 import RecipeCard from "../components/RecipeCard";
 /**
@@ -107,7 +109,7 @@ export default async function Home() {
     <main>
       <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
         <div className="flex flex-col items-center justify-center gap-7 w-250 mx-auto">
-          <form className="flex flex-col items-center justify-center w-full max-w-250 mx-auto gap-8 bg-white/90 rounded-2xl p-10">
+          {/* <form className="flex flex-col items-center justify-center w-full max-w-250 mx-auto gap-8 bg-white/90 rounded-2xl p-10">
             <label className="before:block before:content-[''] before:h-12.5 before:w-20 before:bg-[url(/icon-upload.svg)] before:bg-contain before:bg-center before:bg-no-repeat">
               <input
                 type="file"
@@ -126,7 +128,8 @@ export default async function Home() {
             type="submit"
             className="rounded-full bg-[#FE8C12] px-16 py-2 font-semibold text-2xl text-white disabled:opacity-50 drop-shadow-md">
             検索する
-          </button>
+          </button> */}
+          <RecipeImageUpload onResult={(result: SearchResult) => console.log(result)} />
         </div>
       </section>
       <section className="bg-[#FFF9EB] py-20">

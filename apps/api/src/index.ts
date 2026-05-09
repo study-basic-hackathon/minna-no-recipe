@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { initEmbedder } from "./lib/embedder.js";
 import { images } from "./routes/images.js";
+import { recipes } from "./routes/recipes.js";
 import { search } from "./routes/search.js";
 
 const app = new Hono();
@@ -13,6 +14,7 @@ app.get("/", (c) => c.text("みんなのレシピ API"));
 app.get("/health", (c) => c.json({ status: "ok" }));
 
 app.route("/api/images", images);
+app.route("/api/recipes", recipes);
 app.route("/api/search", search);
 
 const port = Number(process.env.PORT) || 8080;

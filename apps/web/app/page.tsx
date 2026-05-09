@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { RecipeImageUpload}  from "../components/RecipeImageUpload";
-import type { SearchResult } from "@/app/api/search/route";
+import { HomeUploadSection } from "../components/HomeUploadSection";
 
 import RecipeCard from "../components/RecipeCard";
 /**
@@ -129,7 +128,7 @@ export default async function Home() {
             className="rounded-full bg-[#FE8C12] px-16 py-2 font-semibold text-2xl text-white disabled:opacity-50 drop-shadow-md">
             検索する
           </button> */}
-          <RecipeImageUpload onResult={(result: SearchResult) => console.log(result)} />
+          <HomeUploadSection />
         </div>
       </section>
       <section className="bg-[#FFF9EB] py-20">

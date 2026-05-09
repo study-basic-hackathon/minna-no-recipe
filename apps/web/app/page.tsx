@@ -35,15 +35,31 @@ const steps = [
   },
 ];
 
+// バックエンドが応答しないときページ全体が固まるのを防ぐタイムアウト (ミリ秒)
+const FETCH_TIMEOUT_MS = 10_000;
+
 export default async function Home() {
   // 「最近検索」と「最近追加 (= ユーザー投稿)」は独立した取得なので Promise.all で並列化。
-  // 4xx/5xx は throw → app/error.tsx に委譲。
-  const [recentSearchesRes, recentRecipesRes] = await Promise.all([
-    fetch(`${API_URL}/api/recipes/recent-searches?limit=5`, {
-      cache: "no-store",
-    }),
-    fetch(`${API_URL}/api/recipes/recent?limit=7`, { cache: "no-store" }),
-  ]);
+  // 4xx/5xx は throw → app/error.tsx に委譲。タイムアウト時は AbortError として伝搬。
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  let recentSearchesRes: Response;
+  let recentRecipesRes: Response;
+  try {
+    [recentSearchesRes, recentRecipesRes] = await Promise.all([
+      fetch(`${API_URL}/api/recipes/recent-searches?limit=5`, {
+        cache: "no-store",
+        signal: controller.signal,
+      }),
+      fetch(`${API_URL}/api/recipes/recent?limit=7`, {
+        cache: "no-store",
+        signal: controller.signal,
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!recentSearchesRes.ok) {
     throw new Error(

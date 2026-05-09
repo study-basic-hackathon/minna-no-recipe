@@ -6,7 +6,7 @@ const Header = () => {
     <header className="fixed top-0 left-0 z-50 w-full bg-white/90 shadow-md">
       <div className="mx-auto flex max-w-250 items-center justify-between py-3">
         <h1>
-          <Link href="/">
+          <Link href="#">
             <Image
               src="/logo.svg"
               alt="みんなのレシピ"

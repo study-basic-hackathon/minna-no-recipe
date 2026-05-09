@@ -19,6 +19,9 @@ import type { RecipesResponse } from "@/app/api/recipes/route";
  */
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+// バックエンドが応答しないときページ全体が固まるのを防ぐタイムアウト (ミリ秒)
+const FETCH_TIMEOUT_MS = 10_000;
+
 type Props = {
   searchParams: Promise<{ category?: string }>;
 };
@@ -38,10 +41,19 @@ export default async function RecipesPage({ searchParams }: Props) {
 
   // Server Component なのでバックエンドに直接アクセス (BFF を経由しない)
   // cache: "no-store" は毎回最新を取得するため
-  const res = await fetch(
-    `${API_URL}/api/recipes?category=${encodeURIComponent(category)}`,
-    { cache: "no-store" },
-  );
+  // タイムアウト時は AbortError として throw → app/error.tsx に委譲
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch(
+      `${API_URL}/api/recipes?category=${encodeURIComponent(category)}`,
+      { cache: "no-store", signal: controller.signal },
+    );
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   if (!res.ok) {
     // 4xx / 5xx は app/error.tsx に委譲

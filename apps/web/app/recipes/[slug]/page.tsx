@@ -1,5 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { RecentSearchesResponse } from "@/app/api/recipes/recent-searches/route";
 import type { Ingredient, RecipeDetailResponse } from "@/app/api/recipes/route";
 
 /**
@@ -16,36 +18,8 @@ import type { Ingredient, RecipeDetailResponse } from "@/app/api/recipes/route";
  */
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
-/**
- * @deprecated 仮データ。サイドバーの「最近検索されたメニュー」は別途実装予定。
- */
-const recentMenus = [
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-];
+// バックエンドが応答しないときページ全体が固まるのを防ぐタイムアウト (ミリ秒)
+const FETCH_TIMEOUT_MS = 10_000;
 
 // API の Ingredient (name + amount + unit) を 1 行表示用文字列に整形する
 function formatAmount(ingredient: Ingredient): string {
@@ -63,21 +37,48 @@ export default async function RecipeDetailPage({
 }) {
   const { slug } = await params;
 
-  const res = await fetch(`${API_URL}/api/recipes/${slug}`, {
-    cache: "no-store",
-  });
+  // レシピ詳細とサイドバーの「最近検索」は独立して取得できるので並列化
+  // タイムアウト時は AbortError として throw → app/error.tsx に委譲
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-  if (res.status === 404) {
-    // レシピが存在しないので Next.js 標準の 404 経路へ
+  let recipeRes: Response;
+  let recentRes: Response;
+  try {
+    [recipeRes, recentRes] = await Promise.all([
+      fetch(`${API_URL}/api/recipes/${slug}`, {
+        cache: "no-store",
+        signal: controller.signal,
+      }),
+      fetch(`${API_URL}/api/recipes/recent-searches?limit=5`, {
+        cache: "no-store",
+        signal: controller.signal,
+      }),
+    ]);
+  } finally {
+    clearTimeout(timeoutId);
+  }
+
+  // 404 (レシピなし) も 400 (UUID 形式不正) もユーザーから見れば
+  // 「そんなレシピ無い」なので両方 notFound() に統合する。
+  // 真のサーバー異常 (5xx 等) のみ Error Boundary に委譲。
+  if (recipeRes.status === 404 || recipeRes.status === 400) {
     notFound();
   }
 
-  if (!res.ok) {
-    // 400 (UUID 形式不正) / 500 (DB エラー) などはエラー境界に委譲
-    throw new Error(`recipe 取得に失敗しました (HTTP ${res.status})`);
+  if (!recipeRes.ok) {
+    throw new Error(`recipe 取得に失敗しました (HTTP ${recipeRes.status})`);
   }
 
-  const { data: recipe } = (await res.json()) as RecipeDetailResponse;
+  if (!recentRes.ok) {
+    throw new Error(
+      `recent-searches 取得に失敗しました (HTTP ${recentRes.status})`,
+    );
+  }
+
+  const { data: recipe } = (await recipeRes.json()) as RecipeDetailResponse;
+  const { response: recentMenus } =
+    (await recentRes.json()) as RecentSearchesResponse;
 
   return (
     <main>
@@ -150,29 +151,40 @@ export default async function RecipeDetailPage({
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
-            <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
-              {recentMenus.map((menu, index) => (
-                <li
-                  key={index}
-                  className="grid grid-rows-[auto_1fr] drop-shadow-lg"
-                >
-                  <a className="contents" href={menu.link}>
-                    <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
-                      <Image
-                        className="object-cover object-center"
-                        src={menu.image}
-                        alt={menu.name}
-                        fill
-                        sizes="296px"
-                      />
-                    </div>
-                    <span className="rounded-b-xl bg-white p-4">
-                      {menu.name}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {recentMenus.length === 0 ? (
+              <p className="text-zinc-700">
+                まだ検索履歴がありません。
+              </p>
+            ) : (
+              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
+                {recentMenus.map((menu) => (
+                  <li
+                    key={menu.recipe_id}
+                    className="grid grid-rows-[auto_1fr] drop-shadow-lg"
+                  >
+                    <Link
+                      className="contents"
+                      href={`/recipes/${menu.recipe_id}`}
+                    >
+                      {menu.image_path && (
+                        <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
+                          <Image
+                            className="object-cover object-center"
+                            src={menu.image_path}
+                            alt={menu.name}
+                            fill
+                            sizes="296px"
+                          />
+                        </div>
+                      )}
+                      <span className="rounded-b-xl bg-white p-4">
+                        {menu.name}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
       </section>

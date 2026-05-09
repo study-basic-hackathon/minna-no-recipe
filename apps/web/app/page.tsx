@@ -1,7 +1,12 @@
 import Image from "next/image";
+import Link from "next/link";
 import { HomeUploadSection } from "../components/HomeUploadSection";
 
 import RecipeCard from "../components/RecipeCard";
+
+// 「今月のおすすめメニュー」のリンク先 recipe_id (運営キュレーションのため固定)
+// DB に投入済み: name='ベーコンのアスパラ巻き', category='asparagus'
+const MONTHLY_FEATURED_RECIPE_ID = "81fc2557-a3fb-4cd0-92b3-54b8ee847e15";
 /**
  * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
  */
@@ -133,13 +138,19 @@ export default async function Home() {
               before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-crown.svg')] before:bg-contain before:bg-no-repeat">
               今月のおすすめメニュー
             </h2>
+            {/* 今月のおすすめは表示自体は固定 (運営キュレーション扱い)。 */}
+            {/* リンク先のみ DB に存在する実レシピ ID を指す。 */}
+            {/* TODO: 月替わりで対象を入れ替える運用が決まったら featured フラグや別テーブルに置き換える */}
             <div className="flex items-center gap-8 w-full">
-              <a className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg">
+              <Link
+                href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`}
+                className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg"
+              >
                 <Image className="object-cover object-center" src="/img-asparagus.png" alt={"今月のおすすめメニュー"} width={400} height={287} />
                 <span className="absolute bottom-0 left-0 w-full p-4 bg-white/90">
                   ベーコンのアスパラ巻き
                 </span>
-              </a>
+              </Link>
               <div
                 className="flex flex-col gap-6 items-end flex-1 py-6 px-1"
                 style={{
@@ -151,9 +162,9 @@ export default async function Home() {
                 <p className="leading-[1.8]">
                   春から初夏にかけて旬を迎えるアスパラガスは、みずみずしく甘みが強いのが特徴です。特に北海道や長野県産が有名で、昼夜の寒暖差によってやわらかく風味豊かに育ちます。ベーコンで巻いて焼くことで、アスパラのシャキッとした食感と自然な甘さに、ベーコンの塩気と旨みが重なり、シンプルながら満足感のある一品に仕上がります。旬の味わいをぜひ楽しんでみてください。
                 </p>
-                <a href="" className="text-[#E97D35] hover:underline transition-all duration-100 font-semibold">
+                <Link href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`} className="text-[#E97D35] hover:underline transition-all duration-100 font-semibold">
                   →レシピを見る
-                </a>
+                </Link>
               </div>
             </div>
           </div>

@@ -69,16 +69,115 @@ recipes.get("/", async (c) => {
   },{} as Record<string, any[]>);
 
   //レシピ配列を生成
+  //recipe_id はフロントが詳細ページへのリンクに使うため残す。timestamp のみ除外
+  //destructure で破棄するキーは '_' プレフィックスで未使用宣言とする (lint 対応)
   const response = recipes.map(recipe => {
-    //使用しないカラムはここで取り除く
-    const { recipe_id,created_at,updated_at, ...rest } = recipe;
+    const { created_at: _created_at, updated_at: _updated_at, ...rest } = recipe;
+    const recipe_id = recipe.recipe_id;
 
-    return{
+    return {
       ...rest,
-      ingredients: (ingredientsMap[recipe_id] ?? []).map(({ recipe_id,ingredient_id,created_at,updated_at,...rest }: any) => rest),
-      steps: (stepsMap[recipe_id] ?? []).map(({ recipe_id,step_id,created_at,updated_at,...rest }: any) => rest)
+      ingredients: (ingredientsMap[recipe_id] ?? []).map(
+        ({
+          recipe_id: _recipe_id,
+          ingredient_id: _ingredient_id,
+          created_at: _created_at,
+          updated_at: _updated_at,
+          ...rest
+        }: any) => rest,
+      ),
+      steps: (stepsMap[recipe_id] ?? []).map(
+        ({
+          recipe_id: _recipe_id,
+          step_id: _step_id,
+          created_at: _created_at,
+          updated_at: _updated_at,
+          ...rest
+        }: any) => rest,
+      ),
     };
   });
 
   return c.json({ response });
+});
+
+// recipe_id (UUID) で単一レシピを取得する詳細用エンドポイント。
+// 一覧用 ("/" + ?category=...) とは別経路。Hono は静的セグメント vs 動的セグメントを区別する。
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+recipes.get("/:id", async (c) => {
+  const id = c.req.param("id");
+
+  // 不正な UUID は Supabase に投げる前に 400 で弾く
+  // (DB に投げると "invalid input syntax for type uuid" の 500 になり原因が分かりづらい)
+  if (!UUID_REGEX.test(id)) {
+    return c.json({ error: "invalid id format" }, 400);
+  }
+
+  // 単一レシピ取得
+  const { data: recipe, error: recipeError } = await supabase
+    .from("recipes")
+    .select("*")
+    .eq("recipe_id", id)
+    .maybeSingle(); // 0 件なら null を返す (1 件以上だと PostgrestError)
+
+  if (recipeError) {
+    console.error("recipes detail API error:", recipeError);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  if (!recipe) {
+    return c.json({ error: "recipe not found" }, 404);
+  }
+
+  // 関連する材料・手順
+  const [ingredientsResult, stepsResult] = await Promise.all([
+    supabase
+      .from("ingredients")
+      .select("*")
+      .eq("recipe_id", id)
+      .order("ingredient_id"),
+    supabase
+      .from("steps")
+      .select("*")
+      .eq("recipe_id", id)
+      .order("step_number", { ascending: true }),
+  ]);
+
+  if (ingredientsResult.error) {
+    console.error("ingredients API error:", ingredientsResult.error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+  if (stepsResult.error) {
+    console.error("steps API error:", stepsResult.error);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  // 不要カラム (timestamps, FK) を取り除いてネスト構造で返す
+  const { created_at: _created_at, updated_at: _updated_at, ...rest } = recipe;
+
+  const data = {
+    ...rest,
+    ingredients: (ingredientsResult.data ?? []).map(
+      ({
+        recipe_id: _recipe_id,
+        ingredient_id: _ingredient_id,
+        created_at: _created_at,
+        updated_at: _updated_at,
+        ...rest
+      }: any) => rest,
+    ),
+    steps: (stepsResult.data ?? []).map(
+      ({
+        recipe_id: _recipe_id,
+        step_id: _step_id,
+        created_at: _created_at,
+        updated_at: _updated_at,
+        ...rest
+      }: any) => rest,
+    ),
+  };
+
+  return c.json({ data });
 });

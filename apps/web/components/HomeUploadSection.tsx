@@ -5,13 +5,17 @@ import { useState } from "react";
 import { RecipeImageUpload } from "./RecipeImageUpload";
 
 /**
- * トップページ用の画像アップロード + 検索エントリーポイント。
+ * トップページ用の画像アップロード + ルーティングエントリーポイント。
  *
- * page.tsx (Server Component) から関数 prop を Client Component (RecipeImageUpload) に
- * 直接渡せないため、ここで client 境界を挟んでルーティングを担当する。
+ * フロー:
+ *  1. 画像アップロード → /api/search で類似カテゴリ取得
+ *  2. category が取れたら /recipes?category=... へ遷移
+ *  3. 検索ヒットしなかった場合 (category=null) はその場で案内文表示
  *
- * 検索成功時は推測カテゴリを query に乗せて /recipes に遷移する。
- * (該当なし = 閾値以上のマッチがない場合) はその場で案内文を表示。
+ * 結果表示は遷移先の /recipes ページ側で担当する。
+ *
+ * page.tsx (Server Component) から関数 prop を Client Component に直接渡せないため
+ * ここで client 境界を挟む。
  */
 export function HomeUploadSection() {
   const router = useRouter();

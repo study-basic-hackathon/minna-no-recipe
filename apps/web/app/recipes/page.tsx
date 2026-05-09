@@ -86,7 +86,7 @@ export default async function RecipesPage({ searchParams }: Props) {
                 className="block transition hover:opacity-80"
               >
                 {recipe.image_path && (
-                  <div className="relative aspect-[3/2] w-full">
+                  <div className="relative aspect-3/2 w-full">
                     <Image
                       src={recipe.image_path}
                       alt={recipe.name}

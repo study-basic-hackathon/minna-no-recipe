@@ -129,6 +129,7 @@ export default async function Home() {
               <Link
                 href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`}
                 className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg
+                max-[768px]:flex-1 max-[768px]:w-auto
                 max-[640px]:w-full"
               >
                 <Image

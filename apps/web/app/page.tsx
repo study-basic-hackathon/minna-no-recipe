@@ -165,7 +165,7 @@ export default async function Home() {
         </section>
         <section>
           <div className="mx-auto flex w-250 flex-col gap-4
-          max-[1000px]:w-full box-border max-[1000px]:px-4">
+          max-[1000px]:w-full box-border max-[1000px]:pl-4 max-[640px]:pl-4 max-[640px]:pr-0">
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
@@ -174,7 +174,8 @@ export default async function Home() {
                 まだ検索履歴がありません。レシピを検索してみてください。
               </p>
             ) : (
-              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
+              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8
+              max-[1000px]:pr-6">
                 {recentMenus.map((menu) => (
                   <li
                     key={menu.recipe_id}

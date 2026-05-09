@@ -128,7 +128,8 @@ export function RecipeImageUpload({ onResult }: Props) {
           <path d="M12 3a6 6 0 00-5.91 5.06A5 5 0 007 18h10a4 4 0 001.13-7.84A6 6 0 0012 3zm-1 12V11.41l-1.79 1.8-1.42-1.42L12 7.59l4.21 4.2-1.42 1.42L13 11.41V15h-2z" />
         </svg>
 
-        <p className="text-lg font-bold text-orange-500">
+        <p className="text-3xl font-bold text-orange-500
+        max-[1000px]:text-2xl">
           料理写真をアップロードしてレシピを検索
         </p>
         <p className="mt-2 text-sm text-zinc-700">

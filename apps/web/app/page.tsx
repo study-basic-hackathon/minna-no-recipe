@@ -1,5 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { RecentRecipesResponse } from "@/app/api/recipes/recent/route";
+import type { RecentSearchesResponse } from "@/app/api/recipes/recent-searches/route";
 import { HomeUploadSection } from "../components/HomeUploadSection";
 
 import RecipeCard from "../components/RecipeCard";
@@ -7,10 +9,10 @@ import RecipeCard from "../components/RecipeCard";
 // 「今月のおすすめメニュー」のリンク先 recipe_id (運営キュレーションのため固定)
 // DB に投入済み: name='ベーコンのアスパラ巻き', category='asparagus'
 const MONTHLY_FEATURED_RECIPE_ID = "81fc2557-a3fb-4cd0-92b3-54b8ee847e15";
-/**
- * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
- */
-import recentMenusMock from "@/mock/recentMenus.json";
+
+// Server Component から自分自身 (Next.js 側 BFF) を fetch すると build 時の
+// prerender で失敗するため、ここではバックエンドに直接アクセスする。
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 /**
  * @deprecated 仮データ。API 完成後に削除し、サーバーから取得するように差し替える。
@@ -33,81 +35,33 @@ const steps = [
   },
 ];
 
-/**
- * @deprecated 仮データ。API 完成後に削除し、ユーザー投稿一覧をサーバーから取得するように差し替える。
- */
-const works = [
-  {
-    name: "アスパラガスのベーコン巻き",
-    link: "#",
-    image: "/img-asparagus.png",
-  },
-  {
-    name: "ステーキとポテトの鉄板焼き",
-    link: "#",
-    image: "/img-bakedpotato.jpg",
-  },
-  {
-    name: "オートミールクッキー",
-    link: "#",
-    image: "/img-cookies.jpg",
-  },
-  {
-    name: "リボンパスタのジェノベーゼ",
-    link: "#",
-    image: "/img-pasta.jpg",
-  },
-  {
-    name: "5色野菜のサラダ",
-    link: "#",
-    image: "/img-salad.jpg",
-  },
-  {
-    name: "ブルーベリーのフレンチトースト",
-    link: "#",
-    image: "/img-toast.jpg",
-  },
-  {
-    name: "ツナとキャベツのホットサンド",
-    link: "#",
-    image: "/img-hotsand.jpg",
-  },
-  {
-    name: "サンラータン",
-    link: "#",
-    image: "/img-noodle.jpg",
-  },
-  {
-    name: "鶏胸肉のグリル",
-    link: "#",
-    image: "/img-chicken.jpg",
-  },
-];
-
-type RecentMenu = {
-  id: string;
-  name: string;
-  slug: string;
-  image: string;
-};
-
 export default async function Home() {
-  // TODO: API 完成後は下記の fetch を有効化してバックエンドから取得する。
-  // 現状は self-fetch でビルド時 prerender が失敗する可能性があるため、
-  // 一時的に import で代用している。
-  // const res = await fetch(
-  //   "http://localhost:3000/mock/recentMenus.json",
-  //   {
-  //     cache: "no-store",
-  //   }
-  // );
-  //
-  // if (!res.ok) {
-  //   throw new Error("recentMenus の取得に失敗しました");
-  // }
-  //
-  // const json = await res.json();
-  const recentMenus: RecentMenu[] = recentMenusMock.data;
+  // 「最近検索」と「最近追加 (= ユーザー投稿)」は独立した取得なので Promise.all で並列化。
+  // 4xx/5xx は throw → app/error.tsx に委譲。
+  const [recentSearchesRes, recentRecipesRes] = await Promise.all([
+    fetch(`${API_URL}/api/recipes/recent-searches?limit=5`, {
+      cache: "no-store",
+    }),
+    fetch(`${API_URL}/api/recipes/recent?limit=7`, { cache: "no-store" }),
+  ]);
+
+  if (!recentSearchesRes.ok) {
+    throw new Error(
+      `recent-searches 取得に失敗しました (HTTP ${recentSearchesRes.status})`,
+    );
+  }
+  if (!recentRecipesRes.ok) {
+    throw new Error(
+      `recent recipes 取得に失敗しました (HTTP ${recentRecipesRes.status})`,
+    );
+  }
+
+  const recentSearchesData =
+    (await recentSearchesRes.json()) as RecentSearchesResponse;
+  const recentRecipesData =
+    (await recentRecipesRes.json()) as RecentRecipesResponse;
+  const recentMenus = recentSearchesData.response;
+  const works = recentRecipesData.response;
 
   return (
     <main>
@@ -190,28 +144,40 @@ export default async function Home() {
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
-            <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
-              {recentMenus.map((menu, index) => (
-                <li
-                  key={index}
-                  className="grid grid-rows-[auto_1fr] drop-shadow-lg"
-                >
-                  <a className="contents" href={`/recipes/${menu.slug}`}>
-                    <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
-                      <Image
-                        className="object-cover object-center"
-                        src={menu.image}
-                        alt={menu.name}
-                        fill
-                      />
-                    </div>
-                    <span className="rounded-b-xl bg-white p-4">
-                      {menu.name}
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+            {recentMenus.length === 0 ? (
+              <p className="text-zinc-700">
+                まだ検索履歴がありません。レシピを検索してみてください。
+              </p>
+            ) : (
+              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
+                {recentMenus.map((menu) => (
+                  <li
+                    key={menu.recipe_id}
+                    className="grid grid-rows-[auto_1fr] drop-shadow-lg"
+                  >
+                    <Link
+                      className="contents"
+                      href={`/recipes/${menu.recipe_id}`}
+                    >
+                      {menu.image_path && (
+                        <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
+                          <Image
+                            className="object-cover object-center"
+                            src={menu.image_path}
+                            alt={menu.name}
+                            fill
+                            sizes="296px"
+                          />
+                        </div>
+                      )}
+                      <span className="rounded-b-xl bg-white p-4">
+                        {menu.name}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </section>
         <section>
@@ -219,36 +185,46 @@ export default async function Home() {
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               ユーザーが投稿した料理たち
             </h2>
-            {/* 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。 */}
-            {/* 自動分配 (columns-3) だと中央 3 件を保証できないため、列を明示的に作る。 */}
-            <div className="grid grid-cols-3 gap-6 p-2 pb-8">
-              {[
-                works.slice(0, 2), // 左列 2 件
-                works.slice(2, 5), // 中央列 3 件
-                works.slice(5, 7), // 右列 2 件
-              ].map((column, columnIndex) => (
-                <ul key={columnIndex} className="flex flex-col gap-6">
-                  {column.map((menu, index) => (
-                    <li key={index}>
-                      <a href={menu.link} className="block drop-shadow-lg">
-                        <div className="overflow-hidden rounded-t-xl bg-white">
-                          <Image
-                            src={menu.image}
-                            alt={menu.name}
-                            width={296}
-                            height={200}
-                            className="h-auto w-full object-cover"
-                          />
-                        </div>
-                        <span className="block rounded-b-xl bg-white p-4">
-                          {menu.name}
-                        </span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              ))}
-            </div>
+            {works.length === 0 ? (
+              <p className="text-zinc-700">まだレシピが登録されていません。</p>
+            ) : (
+              // 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。
+              // 自動分配 (columns-3) だと中央 3 件を保証できないため、列を明示的に作る。
+              // データが 7 件未満の場合は順に詰めるだけ。
+              <div className="grid grid-cols-3 gap-6 p-2 pb-8">
+                {[
+                  works.slice(0, 2), // 左列 2 件
+                  works.slice(2, 5), // 中央列 3 件
+                  works.slice(5, 7), // 右列 2 件
+                ].map((column, columnIndex) => (
+                  <ul key={columnIndex} className="flex flex-col gap-6">
+                    {column.map((menu) => (
+                      <li key={menu.recipe_id}>
+                        <Link
+                          href={`/recipes/${menu.recipe_id}`}
+                          className="block drop-shadow-lg"
+                        >
+                          {menu.image_path && (
+                            <div className="overflow-hidden rounded-t-xl bg-white">
+                              <Image
+                                src={menu.image_path}
+                                alt={menu.name}
+                                width={296}
+                                height={200}
+                                className="h-auto w-full object-cover"
+                              />
+                            </div>
+                          )}
+                          <span className="block rounded-b-xl bg-white p-4">
+                            {menu.name}
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ))}
+              </div>
+            )}
           </div>
         </section>
       </section>

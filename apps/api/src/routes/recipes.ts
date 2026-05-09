@@ -111,6 +111,125 @@ recipes.get("/", async (c) => {
   return c.json({ response });
 });
 
+// 最近追加されたレシピ一覧 (= ユーザーが投稿した料理セクション用)。
+// 単純に created_at DESC で limit 件返すだけ。
+//
+// 静的セグメントなので "/:id" より前に定義する必要がある。
+recipes.get("/recent", async (c) => {
+  const limit = Math.min(Math.max(Number(c.req.query("limit")) || 7, 1), 50);
+
+  const { data: recipesData, error: recipesError } = await supabase
+    .from("recipes")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (recipesError) {
+    console.error("recent recipes API error:", recipesError);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  // 一覧用なので ingredients/steps はネストせず、recipe_id + 基本フィールドのみ
+  const response = (recipesData ?? []).map((recipe) => {
+    const {
+      created_at: _created_at,
+      updated_at: _updated_at,
+      ...rest
+    } = recipe;
+    return rest;
+  });
+
+  return c.json({ response });
+});
+
+// 最近検索されたメニュー一覧。
+// 直近にアップロード/マッチした画像のカテゴリを集めて、
+// それらのカテゴリに属するレシピを最新順で返す。
+//
+// 注意: このルートは "/:id" よりも前に定義する必要がある。
+// Hono は定義順に評価するため、/:id が先だと "/recent-searches" が id 扱いされてしまう。
+recipes.get("/recent-searches", async (c) => {
+  const limit = Math.min(Math.max(Number(c.req.query("limit")) || 10, 1), 50);
+
+  // 1. マッチ済みの最近のアップロード画像を取得 (matched_training_image_id でグループ化はせず素直に時系列)
+  const { data: matchedImages, error: imagesError } = await supabase
+    .from("images")
+    .select("matched_training_image_id, created_at")
+    .not("matched_training_image_id", "is", null)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (imagesError) {
+    console.error("recent-searches images API error:", imagesError);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  if (!matchedImages || matchedImages.length === 0) {
+    return c.json({ response: [] });
+  }
+
+  // 2. training_images の category を引く
+  const trainingIds = matchedImages
+    .map((m) => m.matched_training_image_id)
+    .filter((id): id is string => Boolean(id));
+
+  const { data: trainingImagesData, error: tiError } = await supabase
+    .from("training_images")
+    .select("id, category")
+    .in("id", trainingIds);
+
+  if (tiError) {
+    console.error("recent-searches training_images API error:", tiError);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  const idToCategory = new Map<string, string>(
+    (trainingImagesData ?? [])
+      .filter((t) => t.category)
+      .map((t) => [t.id, t.category as string]),
+  );
+
+  // 3. 検索ヒット時系列に沿ってユニークなカテゴリ順を作る
+  const orderedCategories: string[] = [];
+  const seenCategories = new Set<string>();
+  for (const img of matchedImages) {
+    const cat = idToCategory.get(img.matched_training_image_id as string);
+    if (cat && !seenCategories.has(cat)) {
+      seenCategories.add(cat);
+      orderedCategories.push(cat);
+    }
+  }
+
+  if (orderedCategories.length === 0) {
+    return c.json({ response: [] });
+  }
+
+  // 4. それらのカテゴリに属するレシピを取得 (一覧用なので ingredients/steps はネストしない)
+  const { data: recipesData, error: recipesError } = await supabase
+    .from("recipes")
+    .select("*")
+    .in("category", orderedCategories)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (recipesError) {
+    console.error("recent-searches recipes API error:", recipesError);
+    return c.json({ error: "Internal server error" }, 500);
+  }
+
+  // recipe_id は維持、timestamps のみ除外
+  const response = (recipesData ?? []).map((recipe) => {
+    const {
+      created_at: _created_at,
+      updated_at: _updated_at,
+      ...rest
+    } = recipe;
+    return rest;
+  });
+
+  return c.json({ response });
+});
+
 // recipe_id (UUID) で単一レシピを取得する詳細用エンドポイント。
 // 一覧用 ("/" + ?category=...) とは別経路。Hono は静的セグメント vs 動的セグメントを区別する。
 const UUID_REGEX =

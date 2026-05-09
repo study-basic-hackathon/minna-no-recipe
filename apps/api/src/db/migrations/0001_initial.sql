@@ -65,14 +65,14 @@ CREATE INDEX IF NOT EXISTS training_images_embedding_idx
 CREATE INDEX IF NOT EXISTS images_embedding_idx
   ON images USING hnsw (embedding vector_cosine_ops);
 
-CREATE INDEX IF NOT EXISTS recipes_embedding_idx
-  ON recipes USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS recipes_category_idx
+  ON recipes (category);
 
-CREATE INDEX IF NOT EXISTS ingredients_embedding_idx
-  ON ingredients USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS ingredients_recipe_id_idx
+  ON ingredients (recipe_id);
 
-CREATE INDEX IF NOT EXISTS steps_embedding_idx
-  ON steps USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX IF NOT EXISTS steps_recipe_id_idx
+  ON steps (recipe_id);
 
 -- RLS: deny all by default. service_role (used by the API) bypasses RLS,
 -- so the server keeps full access while anon/authenticated keys are blocked.

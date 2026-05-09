@@ -6,7 +6,6 @@ export const recipes = new Hono();
 recipes.get("/", async (c) => {
   const category = c.req.query("category");
 
-  //確認事項１：エラー時の挙動はどういう想定か？以後のエラーによるリターンも同様に確認
   if (!category) {
     return c.json({ error: "category is required" }, 400);
   }
@@ -23,17 +22,15 @@ recipes.get("/", async (c) => {
     return c.json({ error: "Internal server error"}, 500);
   }
 
-  //取得件数が0件の場合エラー
+  //該当レシピがない場合は 200 + 空配列を返す (フロント側で「該当なし」UI を表示)
   if(!recipes || recipes.length === 0){
-    console.error("Data not found for recipes : category is " + category);
-    return c.json({ error: "Data not found" }, 404);
+    return c.json({ response: [] });
   }
 
   //レシピの材料と手順を取得するためのIDを用意 (recipe_id は UUID 文字列)
   const recipeIdList: string[] = recipes.map(r => r.recipe_id);
 
-  //確認事項２：材料テーブルの名前はingredientsでよいか？
-  //材料取得
+  //材料取得 (0件でもエラーにしない — 材料を持たないレシピも許容)
   const {data:ingredients,error:ingredientsError} = await supabase
     .from("ingredients")
     .select("*")
@@ -41,14 +38,12 @@ recipes.get("/", async (c) => {
     .order("recipe_id")
     .order("ingredient_id");
 
-  //確認事項３：材料の検索結果が0件でもエラーとしない想定でよいか？手順も同様の確認
   if (ingredientsError) {
     console.error("ingredients API error:",ingredientsError);
     return c.json({ error: "Internal server error"}, 500);
   }
 
-  //確認事項４：手順テーブルの名前はstepsでよいか？
-  //手順取得
+  //手順取得 (0件でもエラーにしない)
   const {data:steps,error:stepsError} = await supabase
     .from("steps")
     .select("*")

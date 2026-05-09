@@ -29,8 +29,8 @@ recipes.get("/", async (c) => {
     return c.json({ error: "Data not found" }, 404);
   }
 
-  //レシピの材料と手順を取得するためのIDを用意
-  const recipeIdList: number[] = recipes.map(r => r.recipe_id);
+  //レシピの材料と手順を取得するためのIDを用意 (recipe_id は UUID 文字列)
+  const recipeIdList: string[] = recipes.map(r => r.recipe_id);
 
   //確認事項２：材料テーブルの名前はingredientsでよいか？
   //材料取得
@@ -65,13 +65,13 @@ recipes.get("/", async (c) => {
   const ingredientsMap = (ingredients ?? []).reduce((accumulator, ingredient) => {
     (accumulator[ingredient.recipe_id] ??= []).push(ingredient);
     return accumulator;
-  },{} as Record<number,any[]>);
+  },{} as Record<string, any[]>);
 
   //手順をrecipe_idごとにグルーピング
   const stepsMap = (steps ?? []).reduce((accumulator, step) => {
     (accumulator[step.recipe_id] ??= []).push(step);
     return accumulator;
-  },{} as Record<number,any[]>);
+  },{} as Record<string, any[]>);
 
   //レシピ配列を生成
   const response = recipes.map(recipe => {

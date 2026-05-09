@@ -53,9 +53,7 @@ export default async function RecipesPage({ searchParams }: Props) {
 
   return (
     <main className="mx-auto max-w-5xl p-8">
-      <h1 className="mb-2 text-2xl font-semibold">
-        「{category}」の検索結果
-      </h1>
+      <h1 className="mb-2 text-2xl font-semibold">「{category}」の検索結果</h1>
       <p className="mb-8 text-sm text-zinc-500">
         {recipes.length} 件見つかりました
       </p>

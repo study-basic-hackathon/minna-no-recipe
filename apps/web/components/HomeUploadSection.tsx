@@ -35,9 +35,7 @@ export function HomeUploadSection() {
         }}
       />
       {noMatch && (
-        <p className="mt-4 text-zinc-700">
-          似たレシピが見つかりませんでした。
-        </p>
+        <p className="mt-4 text-zinc-700">似たレシピが見つかりませんでした。</p>
       )}
     </>
   );

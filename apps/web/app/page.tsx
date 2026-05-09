@@ -112,57 +112,73 @@ export default async function Home() {
   return (
     <main>
       <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
-        <div className="flex flex-col items-center justify-center gap-7 w-250 mx-auto">
+        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-7">
           <HomeUploadSection />
         </div>
       </section>
       <section className="bg-[#FFF9EB] py-20">
-        <div className="flex flex-col items-center justify-center gap-6 w-250 mx-auto">
-          <div className="flex flex-col items-center justify-center gap-2 w-250">
-            <h2 className="text-3xl font-bold text-[#FE8C12]">写真からレシピを見つけよう</h2>
+        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-6">
+          <div className="flex w-250 flex-col items-center justify-center gap-2">
+            <h2 className="text-3xl font-bold text-[#FE8C12]">
+              写真からレシピを見つけよう
+            </h2>
             <div className="text-center">
-              <p>気になる料理の写真をアップロードするだけで、類似したレシピを簡単に検索できます。</p>
-              <p>旅行先で食べた料理や、人気のカフェメニューを自宅で再現してみませんか？</p>
+              <p>
+                気になる料理の写真をアップロードするだけで、類似したレシピを簡単に検索できます。
+              </p>
+              <p>
+                旅行先で食べた料理や、人気のカフェメニューを自宅で再現してみませんか？
+              </p>
             </div>
           </div>
-          <ol className="flex gap-10 w-full">
+          <ol className="flex w-full gap-10">
             {steps.map((step, i) => (
-              <RecipeCard key={i} step={step} i={i} />))}
+              <RecipeCard key={i} step={step} i={i} />
+            ))}
           </ol>
         </div>
       </section>
-      <section className="py-30 flex flex-col w-full gap-20 mx-auto">
+      <section className="mx-auto flex w-full flex-col gap-20 py-30">
         <section>
-          <div className="flex flex-col gap-4 w-250 mx-auto">
-            <h2 className="flex items-end gap-2 text-2xl font-bold
-              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-crown.svg')] before:bg-contain before:bg-no-repeat">
+          <div className="mx-auto flex w-250 flex-col gap-4">
+            <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-crown.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               今月のおすすめメニュー
             </h2>
             {/* 今月のおすすめは表示自体は固定 (運営キュレーション扱い)。 */}
             {/* リンク先のみ DB に存在する実レシピ ID を指す。 */}
             {/* TODO: 月替わりで対象を入れ替える運用が決まったら featured フラグや別テーブルに置き換える */}
-            <div className="flex items-center gap-8 w-full">
+            <div className="flex w-full items-center gap-8">
               <Link
                 href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`}
-                className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg"
+                className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg"
               >
-                <Image className="object-cover object-center" src="/img-asparagus.png" alt={"今月のおすすめメニュー"} width={400} height={287} />
-                <span className="absolute bottom-0 left-0 w-full p-4 bg-white/90">
+                <Image
+                  className="object-cover object-center"
+                  src="/img-asparagus.png"
+                  alt={"今月のおすすめメニュー"}
+                  width={400}
+                  height={287}
+                />
+                <span className="absolute bottom-0 left-0 w-full bg-white/90 p-4">
                   ベーコンのアスパラ巻き
                 </span>
               </Link>
               <div
-                className="flex flex-col gap-6 items-end flex-1 py-6 px-1"
+                className="flex flex-1 flex-col items-end gap-6 px-1 py-6"
                 style={{
-                  borderTop: '1px solid transparent',
-                  borderBottom: '1px solid transparent',
-                  borderImage: 'repeating-linear-gradient(to right, #E97D35 0 8px, transparent 8px 16px) 1'
+                  borderTop: "1px solid transparent",
+                  borderBottom: "1px solid transparent",
+                  borderImage:
+                    "repeating-linear-gradient(to right, #E97D35 0 8px, transparent 8px 16px) 1",
                 }}
               >
                 <p className="leading-[1.8]">
                   春から初夏にかけて旬を迎えるアスパラガスは、みずみずしく甘みが強いのが特徴です。特に北海道や長野県産が有名で、昼夜の寒暖差によってやわらかく風味豊かに育ちます。ベーコンで巻いて焼くことで、アスパラのシャキッとした食感と自然な甘さに、ベーコンの塩気と旨みが重なり、シンプルながら満足感のある一品に仕上がります。旬の味わいをぜひ楽しんでみてください。
                 </p>
-                <Link href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`} className="text-[#E97D35] hover:underline transition-all duration-100 font-semibold">
+                <Link
+                  href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`}
+                  className="font-semibold text-[#E97D35] transition-all duration-100 hover:underline"
+                >
                   →レシピを見る
                 </Link>
               </div>
@@ -170,26 +186,28 @@ export default async function Home() {
           </div>
         </section>
         <section>
-          <div className="flex flex-col gap-4 w-250 mx-auto">
-            <h2 className="flex items-end gap-2 text-2xl font-bold
-              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat">
+          <div className="mx-auto flex w-250 flex-col gap-4">
+            <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
-            <ul className="
-                grid gap-6 w-full overflow-x-auto
-                grid-flow-col
-                auto-cols-[296px]
-                p-2
-                pb-8
-                snap-x snap-mandatory
-              ">
+            <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
               {recentMenus.map((menu, index) => (
-                <li key={index} className="grid grid-rows-[auto_1fr] drop-shadow-lg">
+                <li
+                  key={index}
+                  className="grid grid-rows-[auto_1fr] drop-shadow-lg"
+                >
                   <a className="contents" href={`/recipes/${menu.slug}`}>
-                    <div className="relative w-full h-58 rounded-t-xl overflow-hidden">
-                      <Image className="object-cover object-center" src={menu.image} alt={menu.name} fill />
+                    <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
+                      <Image
+                        className="object-cover object-center"
+                        src={menu.image}
+                        alt={menu.name}
+                        fill
+                      />
                     </div>
-                    <span className="bg-white rounded-b-xl p-4">{menu.name}</span>
+                    <span className="rounded-b-xl bg-white p-4">
+                      {menu.name}
+                    </span>
                   </a>
                 </li>
               ))}
@@ -197,9 +215,8 @@ export default async function Home() {
           </div>
         </section>
         <section>
-          <div className="flex flex-col gap-4 w-250 mx-auto">
-            <h2 className="flex items-end gap-2 text-2xl font-bold
-              before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat">
+          <div className="mx-auto flex w-250 flex-col gap-4">
+            <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               ユーザーが投稿した料理たち
             </h2>
             {/* 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。 */}
@@ -210,10 +227,7 @@ export default async function Home() {
                 works.slice(2, 5), // 中央列 3 件
                 works.slice(5, 7), // 右列 2 件
               ].map((column, columnIndex) => (
-                <ul
-                  key={columnIndex}
-                  className="flex flex-col gap-6"
-                >
+                <ul key={columnIndex} className="flex flex-col gap-6">
                   {column.map((menu, index) => (
                     <li key={index}>
                       <a href={menu.link} className="block drop-shadow-lg">
@@ -223,10 +237,10 @@ export default async function Home() {
                             alt={menu.name}
                             width={296}
                             height={200}
-                            className="w-full h-auto object-cover"
+                            className="h-auto w-full object-cover"
                           />
                         </div>
-                        <span className="block bg-white rounded-b-xl p-4">
+                        <span className="block rounded-b-xl bg-white p-4">
                           {menu.name}
                         </span>
                       </a>
@@ -238,6 +252,6 @@ export default async function Home() {
           </div>
         </section>
       </section>
-    </main >
+    </main>
   );
 }

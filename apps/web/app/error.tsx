@@ -27,7 +27,9 @@ export default function ErrorBoundary({ error, reset }: Props) {
   return (
     <main className="mx-auto flex max-w-xl flex-col items-center gap-6 p-8 text-center">
       <h1 className="text-2xl font-semibold">エラーが発生しました</h1>
-      <p className="text-zinc-700">{error.message || "予期しないエラーです。"}</p>
+      <p className="text-zinc-700">
+        {error.message || "予期しないエラーです。"}
+      </p>
       <button
         type="button"
         onClick={reset}

@@ -20,11 +20,31 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
  * @deprecated 仮データ。サイドバーの「最近検索されたメニュー」は別途実装予定。
  */
 const recentMenus = [
-  { name: "リボンパスタのジェノベーゼ", link: "#", image: "/img-asparagus.png" },
-  { name: "リボンパスタのジェノベーゼ", link: "#", image: "/img-asparagus.png" },
-  { name: "リボンパスタのジェノベーゼ", link: "#", image: "/img-asparagus.png" },
-  { name: "リボンパスタのジェノベーゼ", link: "#", image: "/img-asparagus.png" },
-  { name: "リボンパスタのジェノベーゼ", link: "#", image: "/img-asparagus.png" },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
+  {
+    name: "リボンパスタのジェノベーゼ",
+    link: "#",
+    image: "/img-asparagus.png",
+  },
 ];
 
 // API の Ingredient (name + amount + unit) を 1 行表示用文字列に整形する
@@ -61,12 +81,12 @@ export default async function RecipeDetailPage({
 
   return (
     <main>
-      <section className="py-30 flex flex-col w-full gap-20 mx-auto">
+      <section className="mx-auto flex w-full flex-col gap-20 py-30">
         <section>
-          <div className="flex flex-col gap-4 w-250 mx-auto">
-            <div className="flex items-center gap-8 w-full">
+          <div className="mx-auto flex w-250 flex-col gap-4">
+            <div className="flex w-full items-center gap-8">
               {recipe.image_path && (
-                <div className="relative cursor-pointer w-100 h-72 rounded-lg overflow-hidden drop-shadow-lg">
+                <div className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg">
                   <Image
                     className="object-cover object-center"
                     src={recipe.image_path}
@@ -77,7 +97,7 @@ export default async function RecipeDetailPage({
                 </div>
               )}
               <div
-                className="flex flex-col gap-6 flex-1 py-6 px-1"
+                className="flex flex-1 flex-col gap-6 px-1 py-6"
                 style={{
                   borderTop: "1px solid transparent",
                   borderBottom: "1px solid transparent",
@@ -93,14 +113,14 @@ export default async function RecipeDetailPage({
             </div>
 
             <div className="flex flex-col gap-6">
-              <h2 className="text-2xl font-semibold border-b pb-2">材料</h2>
+              <h2 className="border-b pb-2 text-2xl font-semibold">材料</h2>
               {/* API は材料をフラットなリストで返すのでグルーピングなしで表示 */}
               {/* 将来的に group 列が ingredients に追加されたらここをグループ表示に戻す */}
-              <ul className="flex flex-col divide-y border rounded-lg overflow-hidden">
+              <ul className="flex flex-col divide-y overflow-hidden rounded-lg border">
                 {recipe.ingredients.map((item, j) => (
                   <li
                     key={j}
-                    className="flex justify-between px-4 py-2 bg-white"
+                    className="flex justify-between bg-white px-4 py-2"
                   >
                     <span>{item.name}</span>
                     <span className="text-gray-500">{formatAmount(item)}</span>
@@ -110,7 +130,7 @@ export default async function RecipeDetailPage({
             </div>
 
             <div className="flex flex-col gap-4">
-              <h2 className="text-2xl font-semibold border-b pb-2">作り方</h2>
+              <h2 className="border-b pb-2 text-2xl font-semibold">作り方</h2>
               <ol className="flex flex-col gap-3">
                 {recipe.steps.map((step) => (
                   <li key={step.step_number} className="flex gap-3">
@@ -126,30 +146,18 @@ export default async function RecipeDetailPage({
         </section>
 
         <section>
-          <div className="flex flex-col gap-4 w-250 mx-auto">
-            <h2
-              className="flex items-end gap-2 text-2xl font-bold
-                before:content-[''] before:block before:w-11 before:h-10 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat"
-            >
+          <div className="mx-auto flex w-250 flex-col gap-4">
+            <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
-            <ul
-              className="
-                grid gap-6 w-full overflow-x-auto
-                grid-flow-col
-                auto-cols-[296px]
-                p-2
-                pb-8
-                snap-x snap-mandatory
-              "
-            >
+            <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
               {recentMenus.map((menu, index) => (
                 <li
                   key={index}
                   className="grid grid-rows-[auto_1fr] drop-shadow-lg"
                 >
                   <a className="contents" href={menu.link}>
-                    <div className="relative w-full h-58 rounded-t-xl overflow-hidden">
+                    <div className="relative h-58 w-full overflow-hidden rounded-t-xl">
                       <Image
                         className="object-cover object-center"
                         src={menu.image}
@@ -158,7 +166,7 @@ export default async function RecipeDetailPage({
                         sizes="296px"
                       />
                     </div>
-                    <span className="bg-white rounded-b-xl p-4">
+                    <span className="rounded-b-xl bg-white p-4">
                       {menu.name}
                     </span>
                   </a>

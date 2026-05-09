@@ -7,7 +7,7 @@ import Link from "next/link";
  */
 export default function NotFound() {
   return (
-    <main className="mx-auto flex max-w-xl flex-col items-center gap-6 p-8 text-center">
+    <main className="mx-auto flex flex-1 max-w-xl flex-col items-center gap-6 p-8 text-center">
       <h1 className="text-2xl font-semibold">ページが見つかりませんでした</h1>
       <p className="text-zinc-700">
         お探しのレシピやページは存在しないか、削除された可能性があります。

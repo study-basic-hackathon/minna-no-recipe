@@ -36,7 +36,7 @@ export default function RootLayout({
       className={`${inter.variable} ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       {/* Header が fixed なので、本文が隠れないよう body に padding-top を確保 (≒ Header 高さ 64px) */}
-      <body className="pt-16">
+      <body className="pt-16 flex flex-col min-h-full">
         <Header />
         {children}
         <Footer />

@@ -1,11 +1,11 @@
 const Footer = () => {
   return (
     <footer className="w-full bg-[#FCBB15]">
-      <div className="max-w-250 py-4 mx-auto">
+      <div className="mx-auto max-w-250 py-4">
         <p>みんなのレシピ</p>
       </div>
     </footer>
-    )
+  );
 };
 
-export default Footer
+export default Footer;

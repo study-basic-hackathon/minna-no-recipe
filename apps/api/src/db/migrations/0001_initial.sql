@@ -65,7 +65,20 @@ CREATE INDEX IF NOT EXISTS training_images_embedding_idx
 CREATE INDEX IF NOT EXISTS images_embedding_idx
   ON images USING hnsw (embedding vector_cosine_ops);
 
+CREATE INDEX IF NOT EXISTS recipes_embedding_idx
+  ON recipes USING hnsw (embedding vector_cosine_ops);
+
+CREATE INDEX IF NOT EXISTS ingredients_embedding_idx
+  ON ingredients USING hnsw (embedding vector_cosine_ops);
+
+CREATE INDEX IF NOT EXISTS steps_embedding_idx
+  ON steps USING hnsw (embedding vector_cosine_ops);
+
 -- RLS: deny all by default. service_role (used by the API) bypasses RLS,
 -- so the server keeps full access while anon/authenticated keys are blocked.
 ALTER TABLE training_images ENABLE ROW LEVEL SECURITY;
 ALTER TABLE images ENABLE ROW LEVEL SECURITY;
+
+ALTER TABLE recipes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ingredients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE steps ENABLE ROW LEVEL SECURITY;

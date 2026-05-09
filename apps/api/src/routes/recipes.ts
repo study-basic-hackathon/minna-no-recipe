@@ -19,11 +19,13 @@ recipes.get("/", async (c) => {
 
   //データ取得時に異常がある場合エラー
   if (recipeError) {
-    return c.json({ error: recipeError.message}, 500);
+    console.error("recipes API error:",recipeError);
+    return c.json({ error: "Internal server error"}, 500);
   }
 
   //取得件数が0件の場合エラー
   if(!recipes || recipes.length === 0){
+    console.error("Data not found for recipes : category is " + category);
     return c.json({ error: "Data not found" }, 404);
   }
 
@@ -41,7 +43,8 @@ recipes.get("/", async (c) => {
 
   //確認事項３：材料の検索結果が0件でもエラーとしない想定でよいか？手順も同様の確認
   if (ingredientsError) {
-    return c.json({ error: ingredientsError.message }, 500);
+    console.error("ingredients API error:",ingredientsError);
+    return c.json({ error: "Internal server error"}, 500);
   }
 
   //確認事項４：手順テーブルの名前はstepsでよいか？
@@ -54,7 +57,8 @@ recipes.get("/", async (c) => {
     .order("step_number", { ascending: true });
 
   if (stepsError) {
-    return c.json({ error: stepsError.message }, 500);
+    console.error("steps API error:",stepsError);
+    return c.json({ error: "Internal server error"}, 500);
   }
 
   //材料をrecipe_idごとにグルーピング

@@ -75,7 +75,7 @@ export default async function RecipesPage({ searchParams }: Props) {
           該当するレシピがまだ登録されていません。レシピを投稿してください。
         </p>
       ) : (
-        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-6 md:grid-cols-2 max-[1000px]:grid-cols-3">
           {recipes.map((recipe) => (
             <li
               key={recipe.recipe_id}

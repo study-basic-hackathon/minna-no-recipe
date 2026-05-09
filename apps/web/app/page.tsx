@@ -82,17 +82,21 @@ export default async function Home() {
   return (
     <main>
       <section className="bg-[url('/bg-search.webp')] bg-cover bg-center bg-no-repeat pt-41 pb-20">
-        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-7">
+        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-7
+            max-[1000px]:w-full">
           <HomeUploadSection />
         </div>
       </section>
       <section className="bg-[#FFF9EB] py-20">
-        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-6">
-          <div className="flex w-250 flex-col items-center justify-center gap-2">
-            <h2 className="text-3xl font-bold text-[#FE8C12]">
+        <div className="mx-auto flex w-250 flex-col items-center justify-center gap-6
+            max-[1000px]:w-full box-border max-[1000px]:px-4">
+          <div className="flex w-full flex-col items-center justify-center gap-2">
+            <h2 className="text-3xl font-bold text-[#FE8C12]
+                max-[1000px]:text-2xl">
               写真からレシピを見つけよう
             </h2>
-            <div className="text-center">
+            <div className="text-center
+            max-[1000px]:text-left">
               <p>
                 気になる料理の写真をアップロードするだけで、類似したレシピを簡単に検索できます。
               </p>
@@ -101,7 +105,8 @@ export default async function Home() {
               </p>
             </div>
           </div>
-          <ol className="flex w-full gap-10">
+          <ol className="flex w-full gap-10
+          max-[640px]:flex-col">
             {steps.map((step, i) => (
               <RecipeCard key={i} step={step} i={i} />
             ))}
@@ -110,20 +115,24 @@ export default async function Home() {
       </section>
       <section className="mx-auto flex w-full flex-col gap-20 py-30">
         <section>
-          <div className="mx-auto flex w-250 flex-col gap-4">
+          <div className="mx-auto flex w-250 flex-col gap-4
+          max-[1000px]:w-full box-border max-[1000px]:px-4
+          ">
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-crown.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               今月のおすすめメニュー
             </h2>
             {/* 今月のおすすめは表示自体は固定 (運営キュレーション扱い)。 */}
             {/* リンク先のみ DB に存在する実レシピ ID を指す。 */}
             {/* TODO: 月替わりで対象を入れ替える運用が決まったら featured フラグや別テーブルに置き換える */}
-            <div className="flex w-full items-center gap-8">
+            <div className="flex w-full items-center gap-8
+            max-[640px]:flex-col">
               <Link
                 href={`/recipes/${MONTHLY_FEATURED_RECIPE_ID}`}
-                className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg"
+                className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg
+                max-[640px]:w-full"
               >
                 <Image
-                  className="object-cover object-center"
+                  className="h-auto w-full object-cover object-center"
                   src="/img-asparagus.png"
                   alt={"今月のおすすめメニュー"}
                   width={400}
@@ -138,8 +147,7 @@ export default async function Home() {
                 style={{
                   borderTop: "1px solid transparent",
                   borderBottom: "1px solid transparent",
-                  borderImage:
-                    "repeating-linear-gradient(to right, #E97D35 0 8px, transparent 8px 16px) 1",
+                  borderImage: "repeating-linear-gradient(to right, #E97D35 0 8px, transparent 8px 16px) 1",
                 }}
               >
                 <p className="leading-[1.8]">
@@ -156,7 +164,8 @@ export default async function Home() {
           </div>
         </section>
         <section>
-          <div className="mx-auto flex w-250 flex-col gap-4">
+          <div className="mx-auto flex w-250 flex-col gap-4
+          max-[1000px]:w-full box-border max-[1000px]:px-4">
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
@@ -197,7 +206,8 @@ export default async function Home() {
           </div>
         </section>
         <section>
-          <div className="mx-auto flex w-250 flex-col gap-4">
+          <div className="mx-auto flex w-250 flex-col gap-4
+          max-[1000px]:w-full box-border max-[1000px]:px-4">
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/icon-dishes.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               ユーザーが投稿した料理たち
             </h2>
@@ -207,13 +217,15 @@ export default async function Home() {
               // 3 列レイアウト (左:2 / 中央:3 / 右:2 = 計 7 件)。
               // 自動分配 (columns-3) だと中央 3 件を保証できないため、列を明示的に作る。
               // データが 7 件未満の場合は順に詰めるだけ。
-              <div className="grid grid-cols-3 gap-6 p-2 pb-8">
+              <div className="grid grid-cols-3 gap-6 p-2 pb-8
+              max-[640px]:gap-4">
                 {[
                   works.slice(0, 2), // 左列 2 件
                   works.slice(2, 5), // 中央列 3 件
                   works.slice(5, 7), // 右列 2 件
                 ].map((column, columnIndex) => (
-                  <ul key={columnIndex} className="flex flex-col gap-6">
+                  <ul key={columnIndex} className="flex flex-col gap-6
+                  max-[640px]:gap-4">
                     {column.map((menu) => (
                       <li key={menu.recipe_id}>
                         <Link

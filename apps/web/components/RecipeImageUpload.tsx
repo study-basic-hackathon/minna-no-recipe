@@ -95,7 +95,7 @@ export function RecipeImageUpload({ onResult }: Props) {
   return (
     <form
       onSubmit={onSubmit}
-      className="flex w-full flex-col items-center gap-6"
+      className="flex w-full flex-col items-center gap-6 box-border max-[1000px]:px-4"
     >
       {/* ── ドロップゾーン: クリック / D&D の両方でファイル選択 ── */}
       <div

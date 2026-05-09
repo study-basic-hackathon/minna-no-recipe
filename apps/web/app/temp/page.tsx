@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { RecipeImageUpload } from "@/components/recipe-image-upload";
+import { RecipeImageUpload } from "@/components/RecipeImageUpload";
 
 /**
  * 動作確認用の一時ページ。

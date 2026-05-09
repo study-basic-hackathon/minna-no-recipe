@@ -117,7 +117,7 @@ export default async function RecipeDetailPage({
               </div>
             </div>
             <div className="flex flex-col gap-12 pt-10">
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col">
                 <h2
                   className="relative inline-block w-fit pb-2
                   border-b-2 border-[#FCBB15]

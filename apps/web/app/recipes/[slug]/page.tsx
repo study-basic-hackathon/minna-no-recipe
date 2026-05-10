@@ -84,12 +84,16 @@ export default async function RecipeDetailPage({
     <main>
       <section className="mx-auto flex w-full flex-col gap-20 py-30">
         <section>
-          <div className="mx-auto flex w-250 flex-col gap-4">
-            <div className="flex w-full items-center gap-8">
+          <div className="mx-auto flex w-250 flex-col gap-4
+          max-[1000px]:w-full box-border max-[1000px]:px-4">
+            <div className="flex w-full items-center justify-center gap-8
+                max-[640px]:flex-col">
               {recipe.image_path && (
-                <div className="relative h-72 w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg">
+                <div className="relative w-100 cursor-pointer overflow-hidden rounded-lg drop-shadow-lg
+                max-[768px]:flex-1 max-[768px]:w-auto
+                max-[640px]:w-full">
                   <Image
-                    className="object-cover object-center"
+                    className="h-auto w-full object-cover object-center"
                     src={recipe.image_path}
                     alt={recipe.name}
                     width={400}
@@ -112,42 +116,58 @@ export default async function RecipeDetailPage({
                 </p>
               </div>
             </div>
+            <div className="flex flex-col gap-12 pt-10">
+              <div className="flex flex-col">
+                <h2
+                  className="relative inline-block w-fit pb-2
+                  border-b-2 border-[#FCBB15]
+                  text-2xl font-semibold
+                  after:absolute after:-bottom-0.5 after:left-0 after:h-0.5 after:w-6 after:bg-[#FE7210] after:content-['']
+                  ">
+                  材料
+                </h2>
+                {/* API は材料をフラットなリストで返すのでグルーピングなしで表示 */}
+                {/* 将来的に group 列が ingredients に追加されたらここをグループ表示に戻す */}
+                <ul className="flex flex-col overflow-hidden">
+                  {recipe.ingredients.map((item, j) => (
+                    <li
+                      key={j}
+                      className="flex justify-between border-b border-[#FCBB15] bg-white pt-4 pb-1"
+                    >
+                      <span>{item.name}</span>
+                      <span className="text-gray-500">{formatAmount(item)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
-            <div className="flex flex-col gap-6">
-              <h2 className="border-b pb-2 text-2xl font-semibold">材料</h2>
-              {/* API は材料をフラットなリストで返すのでグルーピングなしで表示 */}
-              {/* 将来的に group 列が ingredients に追加されたらここをグループ表示に戻す */}
-              <ul className="flex flex-col divide-y overflow-hidden rounded-lg border">
-                {recipe.ingredients.map((item, j) => (
-                  <li
-                    key={j}
-                    className="flex justify-between bg-white px-4 py-2"
-                  >
-                    <span>{item.name}</span>
-                    <span className="text-gray-500">{formatAmount(item)}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              <h2 className="border-b pb-2 text-2xl font-semibold">作り方</h2>
-              <ol className="flex flex-col gap-3">
-                {recipe.steps.map((step) => (
-                  <li key={step.step_number} className="flex gap-3">
-                    <span className="font-bold text-[#E97D35]">
-                      {step.step_number}.
-                    </span>
-                    <p className="leading-relaxed">{step.description}</p>
-                  </li>
-                ))}
-              </ol>
+              <div className="flex flex-col gap-4">
+                <h2
+                  className="relative inline-block w-fit pb-2
+                  border-b-2 border-[#FCBB15]
+                  text-2xl font-semibold
+                  after:absolute after:-bottom-0.5 after:left-0 after:h-0.5 after:w-6 after:bg-[#FE7210] after:content-['']
+                  ">
+                  作り方
+                </h2>
+                <ol className="flex flex-col gap-3">
+                  {recipe.steps.map((step) => (
+                    <li key={step.step_number} className="flex gap-3">
+                      <span className="font-bold text-[#E97D35]">
+                        {step.step_number}.
+                      </span>
+                      <p className="leading-relaxed">{step.description}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
             </div>
           </div>
         </section>
 
         <section>
-          <div className="mx-auto flex w-250 flex-col gap-4">
+          <div className="mx-auto flex w-250 flex-col gap-4
+          max-[1000px]:w-full box-border max-[1000px]:pl-4 max-[640px]:pl-4 max-[640px]:pr-0">
             <h2 className="flex items-end gap-2 text-2xl font-bold before:block before:h-10 before:w-11 before:bg-[url('/title-cutlery.svg')] before:bg-contain before:bg-no-repeat before:content-['']">
               最近検索されたメニュー
             </h2>
@@ -156,7 +176,8 @@ export default async function RecipeDetailPage({
                 まだ検索履歴がありません。
               </p>
             ) : (
-              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8">
+              <ul className="grid w-full snap-x snap-mandatory auto-cols-[296px] grid-flow-col gap-6 overflow-x-auto p-2 pb-8
+              max-[1000px]:pr-6">
                 {recentMenus.map((menu) => (
                   <li
                     key={menu.recipe_id}
